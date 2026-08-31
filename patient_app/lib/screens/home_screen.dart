@@ -4,7 +4,7 @@ import '../models/patient_models.dart';
 import 'game_face_recall_screen.dart';
 import 'game_sequencing_screen.dart';
 import 'game_cultural_match_screen.dart';
-import 'game_sound_memory_screen.dart';
+import 'game_family_quiz_screen.dart';
 import 'calm_reminiscence_screen.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -452,15 +452,15 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             const SizedBox(height: 12),
             _buildGameCard(
-              icon: '🔔',
-              iconBg: const Color(0xFFCCFBF1),
+              icon: '❓',
+              iconBg: const Color(0xFFFEF3C7),
               title: _t('game4Title'),
               desc: _t('game4Sub'),
               btnText: _t('playGame'),
               onPlay: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (_) => GameSoundMemoryScreen(language: widget.currentLanguage)),
+                  MaterialPageRoute(builder: (_) => GameFamilyQuizScreen(language: widget.currentLanguage)),
                 );
               },
             ),

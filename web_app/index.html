@@ -262,20 +262,20 @@
           </button>
         </div>
 
-        <!-- Game 4: Sound & Echo Memory -->
-        <div class="game-launch-card" id="cardGameSound">
+        <!-- Game 4: Family Memory Trivia (Customized by Caregiver) -->
+        <div class="game-launch-card" id="cardGameQuiz">
           <div class="game-card-header">
-            <div class="game-card-icon" style="background:#ccfbf1; color:#0f766e;">🔔</div>
+            <div class="game-card-icon" style="background:#fef3c7; color:#b45309;">❓</div>
             <div class="game-card-text">
-              <h4 data-i18n="playSoundGame">Sound & Echo Memory ("Dhwani Smriti")</h4>
-              <p data-i18n="playSoundDesc">Listen to soothing temple bells, cuckoo song, and flowing stream sounds.</p>
+              <h4 data-i18n="playQuizGame">Family Memory Trivia ("আপোনজনৰ প্ৰশ্নোত্তৰ")</h4>
+              <p data-i18n="playQuizDesc">Answer personalized family questions prepared with love by daughter Priya.</p>
             </div>
           </div>
           <div class="game-metrics-pill">
-            <span>🎵 Auditory Stimulus</span>
-            <span>👂 Zen Resonance</span>
+            <span>👨‍👩‍👧 Caregiver Custom</span>
+            <span>💡 Personal Recall</span>
           </div>
-          <button class="btn-play-game" onclick="startSoundMemoryGame()">
+          <button class="btn-play-game" onclick="startFamilyQuizGame()">
             <span>▶</span> Play Game
           </button>
         </div>
@@ -424,6 +424,23 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Personalized Family Quiz Builder (for Game 4) -->
+      <div class="dashboard-card" style="margin-top:20px;">
+        <div class="card-head-flex">
+          <div>
+            <h3>👨‍👩‍👧 Family Memory Quiz Studio ("আপোনজনৰ প্ৰশ্নমালা")</h3>
+            <p class="card-subtitle">Create personalized memory questions & options for Biren Babu to play in Game 4.</p>
+          </div>
+          <button class="btn-primary-action" onclick="openAddQuizModal()" style="background:#d97706;">
+            <span>+</span> Add Quiz Question
+          </button>
+        </div>
+
+        <div class="quiz-questions-table-wrap" id="caregiverQuizList" style="margin-top:14px;">
+          <!-- Injected via JS -->
+        </div>
       </div>
 
     </section>
@@ -794,6 +811,74 @@
         <div class="modal-actions">
           <button type="button" class="btn-cancel" onclick="closeAddNoteModal()">Cancel</button>
           <button type="submit" class="btn-save">Save Clinical Note 📝</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 6: Caregiver Add Custom Quiz Question Modal -->
+  <div id="quizQuestionModal" class="modal-backdrop">
+    <div class="form-modal-container">
+      <div class="modal-header">
+        <h3>❓ Add Personalized Family Quiz Question (for Game 4)</h3>
+        <button class="modal-close-btn" onclick="closeAddQuizModal()">✕</button>
+      </div>
+      <form id="newQuizForm" onsubmit="handleSaveQuizQuestion(event)">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="quizQuestionText">Question for Biren Babu</label>
+            <input type="text" id="quizQuestionText" class="form-input" placeholder="e.g. What is the name of your granddaughter who loves tea gardens?" required />
+          </div>
+
+          <div class="form-group">
+            <label for="quizCategory">Memory Category</label>
+            <select id="quizCategory" class="form-input">
+              <option value="Family Members">Family Members & Grandchildren</option>
+              <option value="Career & Identity">Career & Teaching Past</option>
+              <option value="Family Memories">Family Traditions & Food</option>
+              <option value="Home Familiarity">Home & Neighborhood</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quizCorrectOpt">Correct Answer Option</label>
+            <select id="quizCorrectOpt" class="form-input">
+              <option value="A">Option A is Correct</option>
+              <option value="B">Option B is Correct</option>
+              <option value="C">Option C is Correct</option>
+              <option value="D">Option D is Correct</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="quizOptA">Option A (Choice 1)</label>
+            <input type="text" id="quizOptA" class="form-input" placeholder="e.g. Ananya" required />
+          </div>
+
+          <div class="form-group">
+            <label for="quizOptB">Option B (Choice 2)</label>
+            <input type="text" id="quizOptB" class="form-input" placeholder="e.g. Pooja" required />
+          </div>
+
+          <div class="form-group">
+            <label for="quizOptC">Option C (Choice 3)</label>
+            <input type="text" id="quizOptC" class="form-input" placeholder="e.g. Sunita" required />
+          </div>
+
+          <div class="form-group">
+            <label for="quizOptD">Option D (Choice 4)</label>
+            <input type="text" id="quizOptD" class="form-input" placeholder="e.g. Ritu" required />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="quizHint">Helpful Voice / Text Hint for Patient</label>
+            <input type="text" id="quizHint" class="form-input" placeholder="e.g. Her name starts with A and she calls you Dadu!" required />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeAddQuizModal()">Cancel</button>
+          <button type="submit" class="btn-save" style="background:#d97706;">Save to Patient Game 4 ❓</button>
         </div>
       </form>
     </div>

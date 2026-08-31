@@ -238,6 +238,47 @@ const AppState = {
     ]
   },
 
+  quizQuestions: {
+    'PAT-7401': [
+      {
+        id: 'quiz-1',
+        question: 'What is the name of your sweet granddaughter who loves tea gardens?',
+        options: ['Ananya', 'Pooja', 'Sunita', 'Ritu'],
+        correctOption: 'Ananya',
+        hint: 'Her name starts with A and she calls you Dadu!',
+        category: 'Family Members',
+        createdBy: 'Priya Hazarika (Daughter)'
+      },
+      {
+        id: 'quiz-2',
+        question: 'Which historic college in Guwahati did you teach mathematics for 32 years?',
+        options: ['Cotton College (University)', 'Tezpur University', 'Jorhat Engineering', 'Gauhati Medical'],
+        correctOption: 'Cotton College (University)',
+        hint: 'Located near Dighalipukhuri in Panbazar.',
+        category: 'Career & Identity',
+        createdBy: 'Priya Hazarika (Daughter)'
+      },
+      {
+        id: 'quiz-3',
+        question: "What is Priya's favorite homemade sweet you prepared on Bihu?",
+        options: ['Narikol Laru (Coconut Sweet)', 'Rasgulla', 'Kaju Katli', 'Sandesh'],
+        correctOption: 'Narikol Laru (Coconut Sweet)',
+        hint: 'Made with freshly grated coconut and fragrant jaggery.',
+        category: 'Family Memories',
+        createdBy: 'Priya Hazarika (Daughter)'
+      },
+      {
+        id: 'quiz-4',
+        question: 'What is the color of the front garden gate of your Guwahati residence?',
+        options: ['Forest Green', 'Bright Red', 'Sky Blue', 'Golden Yellow'],
+        correctOption: 'Forest Green',
+        hint: 'It matches the green color of your tea hedge garden.',
+        category: 'Home Familiarity',
+        createdBy: 'Priya Hazarika (Daughter)'
+      }
+    ]
+  },
+
   scheduleTasks: [
     {
       id: 'task-1',
@@ -474,8 +515,8 @@ const i18n = {
     playSeqDesc: 'Arrange morning tea, medicine, garden walk, and bath in chronological order.',
     playTileGame: 'Cultural Memory Match ("Sanskriti Mel")',
     playTileDesc: 'Pair familiar regional symbols: Japi (জাপী), Gamosa (গামোচা), Brass Bell, Flute.',
-    playSoundGame: 'Sound & Echo Memory ("Dhwani Smriti")',
-    playSoundDesc: 'Listen to soothing temple bells, cuckoo song, and flowing stream sounds.',
+    playQuizGame: 'Family Memory Trivia ("আপোনজনৰ প্ৰশ্নোত্তৰ")',
+    playQuizDesc: 'Answer personalized family questions prepared with love by daughter Priya.',
     btnTookMed: 'Confirm Taken',
     btnSpeakMed: 'Listen Instructions'
   },
@@ -496,8 +537,8 @@ const i18n = {
     playSeqDesc: 'চাহ খোৱা, দৰব খোৱা আৰু ফুৰাৰ সঠিক সময় সজাওক।',
     playTileGame: 'সংস্কৃতিৰ স্মৃতি মিলন ("সংস্কৃতি মেল")',
     playTileDesc: 'জাপী, গামোচা, কাঁহৰ ঘণ্টা আৰু বাঁহীৰ সঠিক জোৰ মিলাওক।',
-    playSoundGame: 'ধ্বনি আৰু প্ৰতিধ্বনি স্মৃতি ("ধ্বনি স্মৃতি")',
-    playSoundDesc: 'মন্দিৰৰ ঘণ্টা, কুলিৰ মাত আৰু জুৰিৰ শব্দ চিনি পাওক।',
+    playQuizGame: 'আপোনজনৰ প্ৰশ্নোত্তৰ ("আপোন স্মৃতি")',
+    playQuizDesc: 'জীয়াৰী প্ৰিয়াই আপোনাৰ বাবে মৰমেৰে সজোৱা চিনাকি প্ৰশ্নৰ উত্তৰ দিয়ক।',
     btnTookMed: 'দৰব খোৱা হ’ল',
     btnSpeakMed: 'দৰবৰ নিয়ম শুনক'
   },
@@ -518,8 +559,8 @@ const i18n = {
     playSeqDesc: 'চা খাওয়া, ওষুধ খাওয়া ও হাঁটার সঠিক ক্রম সাজান।',
     playTileGame: 'ঐতিহ্যবাহী স্মৃতি মেল ("সংস্কৃতি মেল")',
     playTileDesc: 'জাপী, গামোচা, কাঁসার ঘণ্টা ও বাঁশির জোড় মেলান।',
-    playSoundGame: 'সুর ও প্রতিধ্বনি স্মৃতি ("ধ্বনি স্মৃতি")',
-    playSoundDesc: 'মন্দিরের ঘণ্টা ও কোকিলের ডাক চিনুন।',
+    playQuizGame: 'পারিবারিক কুইজ ও স্মৃতি ("আপন স্মৃতি")',
+    playQuizDesc: 'মেয়ে প্রিয়ার তৈরি করা পারিবারিক স্মৃতির প্রশ্নের উত্তর দিন।',
     btnTookMed: 'ওষুধ খেয়েছি',
     btnSpeakMed: 'নিয়ম শুনুন'
   },
@@ -540,8 +581,8 @@ const i18n = {
     playSeqDesc: 'चाय, दवा और टहलने की दिनचर्या को सही क्रम में लगाएं।',
     playTileGame: 'सांस्कृतिक स्मृति मिलान ("संस्कृति मेल")',
     playTileDesc: 'जापी, गमोसा, घंटी और बांसुरी के जोड़े मिलाएं।',
-    playSoundGame: 'ध्वनि और प्रतिध्वनि स्मृति ("ध्वनि स्मृति")',
-    playSoundDesc: 'मंदिर की घंटी और कोयल की आवाज को पहचानें।',
+    playQuizGame: 'पारिवारिक यादों की पहेली ("अपनापन प्रश्न")',
+    playQuizDesc: 'बेटी प्रिया द्वारा आपके लिए बनाए गए पारिवारिक प्रश्नों के उत्तर दें।',
     btnTookMed: 'दवा ले ली है',
     btnSpeakMed: 'निर्देश सुनें'
   }
@@ -820,8 +861,101 @@ function renderCaregiverView() {
     `).join('');
   }
 
+  renderCaregiverQuizQuestions();
   renderCaregiverChat();
   renderAlertsList();
+}
+
+function renderCaregiverQuizQuestions() {
+  const container = document.getElementById('caregiverQuizList');
+  if (!container) return;
+
+  const questions = AppState.quizQuestions[AppState.activePatientId] || [];
+  if (questions.length === 0) {
+    container.innerHTML = `<div style="text-align:center; padding:20px; color:#64748b;">No family quiz questions added yet. Click "+ Add Quiz Question" to create one!</div>`;
+    return;
+  }
+
+  container.innerHTML = `
+    <div style="display:flex; flex-direction:column; gap:12px;">
+      ${questions.map((q, idx) => `
+        <div style="background:#f8fafc; border:1.5px solid #e2e8f0; border-radius:14px; padding:14px 18px; display:flex; justify-content:space-between; align-items:flex-start; gap:16px;">
+          <div style="flex:1;">
+            <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;">
+              <span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:11px; padding:3px 8px; border-radius:6px;">Q${idx + 1} • ${q.category}</span>
+              <span style="font-size:12px; color:#64748b;">Created by ${q.createdBy}</span>
+            </div>
+            <h4 style="margin:0 0 8px 0; color:#0f172a; font-size:15px;">${q.question}</h4>
+            <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:8px;">
+              ${q.options.map(opt => `
+                <span style="font-size:12px; font-weight:700; padding:4px 10px; border-radius:8px; ${opt === q.correctOption ? 'background:#dcfce7; color:#15803d; border:1px solid #16a34a;' : 'background:#f1f5f9; color:#475569;'}">
+                  ${opt === q.correctOption ? '✓ ' : ''}${opt}
+                </span>
+              `).join('')}
+            </div>
+            <div style="font-size:12px; color:#b45309;">💡 <em>Hint: "${q.hint}"</em></div>
+          </div>
+          <button onclick="deleteCaregiverQuizQuestion('${q.id}')" style="background:#fee2e2; border:none; color:#ef4444; padding:8px 10px; border-radius:10px; cursor:pointer; font-size:14px;" title="Delete Question">
+            🗑️
+          </button>
+        </div>
+      `).join('')}
+    </div>
+  `;
+}
+
+function openAddQuizModal() {
+  document.getElementById('quizQuestionModal').style.display = 'flex';
+}
+
+function closeAddQuizModal() {
+  document.getElementById('quizQuestionModal').style.display = 'none';
+}
+
+function handleSaveQuizQuestion(e) {
+  e.preventDefault();
+  const qText = document.getElementById('quizQuestionText').value;
+  const category = document.getElementById('quizCategory').value;
+  const correctChoice = document.getElementById('quizCorrectOpt').value;
+  const optA = document.getElementById('quizOptA').value;
+  const optB = document.getElementById('quizOptB').value;
+  const optC = document.getElementById('quizOptC').value;
+  const optD = document.getElementById('quizOptD').value;
+  const hint = document.getElementById('quizHint').value;
+
+  const options = [optA, optB, optC, optD];
+  const choiceMap = { 'A': optA, 'B': optB, 'C': optC, 'D': optD };
+  const correctOption = choiceMap[correctChoice] || optA;
+
+  const newQ = {
+    id: `quiz-${Date.now()}`,
+    question: qText,
+    options: options,
+    correctOption: correctOption,
+    hint: hint || 'Think about your family members.',
+    category: category,
+    createdBy: 'Priya Hazarika (Daughter)'
+  };
+
+  if (!AppState.quizQuestions[AppState.activePatientId]) {
+    AppState.quizQuestions[AppState.activePatientId] = [];
+  }
+  AppState.quizQuestions[AppState.activePatientId].push(newQ);
+
+  closeAddQuizModal();
+  document.getElementById('newQuizForm').reset();
+  AudioEngine.playChime('success');
+  alert(`Question added to Biren Babu's Game 4 ("Family Memory Trivia")!`);
+
+  renderCaregiverQuizQuestions();
+}
+
+function deleteCaregiverQuizQuestion(qId) {
+  if (!confirm('Are you sure you want to delete this quiz question?')) return;
+  if (AppState.quizQuestions[AppState.activePatientId]) {
+    AppState.quizQuestions[AppState.activePatientId] = AppState.quizQuestions[AppState.activePatientId].filter(q => q.id !== qId);
+  }
+  renderCaregiverQuizQuestions();
 }
 
 function renderCaregiverChat() {
@@ -1480,38 +1614,122 @@ function flipCulturalCard(card) {
   }
 }
 
-// Game 4: Sound & Echo Memory
-function startSoundMemoryGame() {
+// Game 4: Family Memory Trivia (Customized by Caregiver)
+function startFamilyQuizGame() {
   AudioEngine.playChime('bell');
+  const questions = AppState.quizQuestions[AppState.activePatientId] || [];
+  if (questions.length === 0) {
+    alert('No family quiz questions available. Please ask daughter Priya to add questions in the Caregiver portal!');
+    return;
+  }
+
+  window.familyQuizState = {
+    questions: questions,
+    currentIndex: 0,
+    score: 0,
+    startTime: Date.now()
+  };
+
+  renderFamilyQuizStep();
+}
+
+function renderFamilyQuizStep() {
+  const { questions, currentIndex, score } = window.familyQuizState;
+  const q = questions[currentIndex];
+  const startTime = Date.now();
+
   const gameHTML = `
-    <div class="game-arena">
-      <h3>🔔 Sound & Echo Memory ("Dhwani Smriti")</h3>
-      <p class="game-prompt">Listen to the soothing regional sound and identify it:</p>
-
-      <button class="btn-play-game" style="max-width:240px; margin:0 auto 24px;" onclick="AudioEngine.playChime('bell')">
-        ▶ Play Sound Again
-      </button>
-
-      <div class="game-options-grid">
-        <button class="btn-game-opt" onclick="checkSoundAnswer(true, this)">🔔 Temple Brass Bell (মন্দিৰৰ ঘণ্টা)</button>
-        <button class="btn-game-opt" onclick="checkSoundAnswer(false, this)">🌊 Brahmaputra Stream (নদীৰ জুৰি)</button>
-        <button class="btn-game-opt" onclick="checkSoundAnswer(false, this)">🐦 Hill Cuckoo (কুলিৰ মাত)</button>
-        <button class="btn-game-opt" onclick="checkSoundAnswer(false, this)">🪈 Bihu Bamboo Flute (বাঁহী)</button>
+    <div class="game-arena" style="max-width:560px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+        <span style="background:#fef3c7; color:#b45309; font-weight:800; font-size:12px; padding:4px 10px; border-radius:8px;">
+          QUESTION ${currentIndex + 1} OF ${questions.length} • ${q.category}
+        </span>
+        <span style="color:#0d9488; font-weight:800; font-size:14px;">⭐ Score: ${score}</span>
       </div>
+
+      <div style="font-size:12px; color:#64748b; margin-bottom:8px; font-weight:700;">
+        👨‍👩‍👧 Customized with love by: <strong>${q.createdBy}</strong>
+      </div>
+
+      <h3 style="font-size:20px; color:#0f172a; line-height:1.4; margin-bottom:20px; background:#f8fafc; padding:16px; border-radius:14px; border:2px solid #cbd5e1;">
+        ${q.question}
+      </h3>
+
+      <div class="game-options-grid" style="margin-bottom:16px;">
+        ${q.options.map((opt, i) => `
+          <button class="btn-game-opt" onclick="checkFamilyQuizAnswer('${opt.replace(/'/g, "\\'")}', '${q.correctOption.replace(/'/g, "\\'")}', '${q.hint.replace(/'/g, "\\'")}', ${startTime}, this)">
+            <strong>${String.fromCharCode(65 + i)}.</strong> ${opt}
+          </button>
+        `).join('')}
+      </div>
+
+      <div id="quizHintContainer" style="display:none; background:#fefce8; border:1.5px solid #facc15; padding:12px; border-radius:12px; margin-bottom:16px; font-size:13px; color:#854d0e; font-weight:700;">
+      </div>
+
+      <button class="btn-med-speak" onclick="AudioEngine.speakText('${q.question.replace(/'/g, "\\'")}', AppState.currentLanguage)" style="margin: 0 auto;">
+        🔊 Read Question Aloud
+      </button>
     </div>
   `;
   openGameModal(gameHTML);
 }
 
-function checkSoundAnswer(isCorrect, btn) {
+function checkFamilyQuizAnswer(selectedOpt, correctOpt, hint, startTime, btn) {
+  const latency = Date.now() - startTime;
+  const isCorrect = (selectedOpt === correctOpt);
+
   if (isCorrect) {
     btn.classList.add('correct');
+    window.familyQuizState.score++;
     AudioEngine.playChime('success');
-    AudioEngine.speakText('Correct! That was the soothing resonance of a traditional temple brass bell.', AppState.currentLanguage);
-    setTimeout(() => closeGameModal(), 1800);
+    AudioEngine.speakText('Wonderful! That is correct!', AppState.currentLanguage);
+
+    AppState.alerts.unshift({
+      id: `alt-${Date.now()}`,
+      type: 'info',
+      title: 'Family Trivia Question Answered',
+      detail: `Patient correctly answered "${window.familyQuizState.questions[window.familyQuizState.currentIndex].question}" (${(latency / 1000).toFixed(2)}s).`,
+      time: 'Just now'
+    });
+
+    setTimeout(() => {
+      advanceFamilyQuiz();
+    }, 1500);
   } else {
     btn.classList.add('wrong');
     AudioEngine.playChime('error');
+    const hintBox = document.getElementById('quizHintContainer');
+    if (hintBox) {
+      hintBox.style.display = 'block';
+      hintBox.innerHTML = `💡 Priya's Hint: "${hint}"`;
+    }
+    AudioEngine.speakText(`Look at the hint: ${hint}`, AppState.currentLanguage);
+  }
+}
+
+function advanceFamilyQuiz() {
+  const { questions, currentIndex, score } = window.familyQuizState;
+  if (currentIndex < questions.length - 1) {
+    window.familyQuizState.currentIndex++;
+    renderFamilyQuizStep();
+  } else {
+    AudioEngine.playChime('success');
+    const finishHTML = `
+      <div class="game-arena" style="text-align:center; padding:30px 20px;">
+        <div style="font-size:48px; margin-bottom:10px;">🎉</div>
+        <h3 style="color:#0f172a; font-size:24px; margin-bottom:8px;">Family Trivia Quiz Completed!</h3>
+        <p style="font-size:16px; color:#15803d; font-weight:700; margin-bottom:12px;">
+          You answered ${score} of ${questions.length} questions correctly!
+        </p>
+        <p style="color:#475569; font-size:14px; max-width:400px; margin:0 auto 24px;">
+          Wonderful job, Biren Babu! Your daughter Priya is very proud of your memory recall today.
+        </p>
+        <button class="btn-primary-action" onclick="closeGameModal()" style="margin:0 auto; padding:12px 24px; font-size:16px;">
+          ✓ Done & Return to Companion
+        </button>
+      </div>
+    `;
+    openGameModal(finishHTML);
   }
 }
 
