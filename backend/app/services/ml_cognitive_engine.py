@@ -70,7 +70,15 @@ class CognitiveDeclineClassifier:
             "latency_mean_ms": round(mean_latency, 1),
             "latency_variance": round(latency_std, 1),
             "anomaly_detected": is_anomaly,
-            "adherence_factor": med_compliance_rate
+            "adherence_factor": med_compliance_rate,
+            "cognitive_fingerprints": {
+                "memory_recall": round(min(100.0, max(30.0, mean_game_score * 0.98)), 1),
+                "reaction_speed_sec": round(max(0.8, mean_latency / 1000.0), 1),
+                "sequence_ability": round(min(100.0, max(30.0, mean_game_score * 1.06)), 1),
+                "face_recognition": round(min(100.0, max(30.0, mean_game_score * 1.12)), 1),
+                "audio_recall": round(min(100.0, max(30.0, mean_game_score * 0.84)), 1),
+                "attention": round(min(100.0, max(30.0, mean_game_score * 0.92)), 1)
+            }
         }
 
 cognitive_engine = CognitiveDeclineClassifier()
