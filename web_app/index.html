@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smriti Sahayak (স্মৃতি সহায়ক) - AI Cognitive & Dementia Care Companion</title>
+  <meta name="description" content="AI-Powered Cognitive Gaming and Memory Assistance Platform for Dementia Patients with Multilingual Voice, Offline-First Architecture, and Caregiver Telemetry.">
+
+  <!-- Google Fonts: Plus Jakarta Sans (Modern Clean UI) & Lora (Warm Classic) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Chart.js for Caregiver Cognitive Telemetry -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+  <!-- App Stylesheet -->
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- =========================================================================
+       APP HEADER & GLOBAL CONTROLS
+       ========================================================================= -->
+  <header class="app-header">
+    <div class="header-container">
+      <div class="brand-badge">
+        <div class="brand-logo-icon">🧠</div>
+        <div class="brand-titles">
+          <h1>Smriti Sahayak <span style="font-size:16px; font-weight:600; color:var(--primary-teal);">(স্মৃতি সহায়ক)</span></h1>
+          <p class="slogan" data-i18n="brandSubtitle">AI Cognitive & Dementia Care Companion</p>
+        </div>
+      </div>
+
+      <!-- Mode Selector (Patient vs Caregiver vs Live Mirror) -->
+      <div class="mode-switcher">
+        <button class="mode-btn active" data-mode="patient">
+          <span>👴</span> Patient Mode
+        </button>
+        <button class="mode-btn" data-mode="caregiver">
+          <span>📊</span> Caregiver Portal
+        </button>
+        <button class="mode-btn" data-mode="mirror">
+          <span>🪟</span> Dual Screen View
+        </button>
+      </div>
+
+      <!-- Language & Sync Indicator -->
+      <div class="lang-selector-wrap">
+        <select class="lang-select" id="langSelect" aria-label="Select Regional Language">
+          <option value="as" selected>অসমীয়া (Assamese)</option>
+          <option value="bn">বাংলা (Bengali)</option>
+          <option value="hi">हिन्दी (Hindi)</option>
+          <option value="en">English (India)</option>
+        </select>
+
+        <div class="sync-status-indicator">
+          <span class="sync-dot"></span>
+          <span>Offline Ready • Synced</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       MAIN CONTENT ROUTER / VIEWS
+       ========================================================================= -->
+  <main class="main-wrapper">
+
+    <!-- -----------------------------------------------------------------------
+         VIEW 1: PATIENT SENIOR ACCESSIBLE COMPANION
+         ----------------------------------------------------------------------- -->
+    <section id="patientView" class="patient-view-container">
+      
+      <!-- Welcome Patient Card -->
+      <div class="patient-welcome-card">
+        <div class="patient-avatar-block">
+          <img src="assets/elder_dadu.jpg" alt="Biren Babu" class="patient-photo">
+          <div class="patient-info">
+            <h2 data-i18n="patientGreeting">নমস্কাৰ, বীৰেন হাজৰিকা ডাঙৰীয়া!</h2>
+            <div class="patient-date-badge">
+              <span>📅</span>
+              <span data-i18n="patientDate">সোমবাৰ, ৩১ আগষ্ট ২০২৬</span>
+            </div>
+          </div>
+        </div>
+
+        <button class="voice-greet-btn" onclick="simulateVoiceResponse()">
+          <span>🔊</span>
+          <span data-i18n="voiceGreet">ৰাতিপুৱাৰ শুভবাৰ্তা শুনক</span>
+        </button>
+      </div>
+
+      <!-- Live Medication Banner -->
+      <div id="patientMedBanner" class="med-alert-banner">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Sensory & Emergency Quick Hub -->
+      <div class="sensory-hub-grid">
+        <div class="hub-card calm-mode" onclick="openCalmReminiscenceModal()">
+          <div class="hub-icon-wrap" style="background:#fef08a; color:#854d0e;">🌅</div>
+          <div>
+            <h3 data-i18n="calmModalTitle">শান্ত মন আৰু স্মৃতি মঞ্জুষা</h3>
+            <p data-i18n="calmModalDesc">মৰমৰ স্মৃতি আৰু সহজ উশাহ-নিশাহেৰে মন শান্ত কৰক।</p>
+          </div>
+        </div>
+
+        <div class="hub-card sos-mode" onclick="triggerSOS()">
+          <div class="hub-icon-wrap" style="background:#fecdd3; color:#9f1239;">🚨</div>
+          <div>
+            <h3 data-i18n="sosTitle">জৰুৰীকালীন সহায় সংকেত</h3>
+            <p data-i18n="sosDesc">প্ৰিয়া আৰু চিকিৎসকৰ সৈতে তৎক্ষণাৎ সংযোগ কৰক।</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cognitive Games Selection -->
+      <div class="section-title-wrap">
+        <h3 data-i18n="gamesHeading">দৈনন্দিন স্মৃতি চৰ্চা খেল</h3>
+        <div class="dda-badge">
+          <span>🧠</span>
+          <span data-i18n="ddaTitle">স্বয়ংক্ৰিয় এআই স্তৰ সক্ৰিয়</span>
+        </div>
+      </div>
+
+      <div class="games-grid">
+        <!-- Game 1: Face & Family Recall -->
+        <div class="game-launch-card">
+          <div class="game-card-header">
+            <div class="game-card-icon" style="background:#e0f2fe; color:#0369a1;">👨‍👩‍👧</div>
+            <div class="game-card-text">
+              <h4 data-i18n="playFaceGame">পৰিয়াল চিনি পোৱা খেল</h4>
+              <p data-i18n="playFaceDesc">আপোনাৰ মৰমৰ পৰিয়াল আৰু আত্মীয়সকলক মনত পেলাওক।</p>
+            </div>
+          </div>
+          <div class="game-metrics-pill">
+            <span>🎯 Memory Retention</span>
+            <span>⚡ Visual Anchor</span>
+          </div>
+          <button class="btn-play-game" onclick="startFaceRecallGame()">
+            <span>▶</span> আৰম্ভ কৰক (Play Game)
+          </button>
+        </div>
+
+        <!-- Game 2: Daily Sequencing -->
+        <div class="game-launch-card">
+          <div class="game-card-header">
+            <div class="game-card-icon" style="background:#fef3c7; color:#b45309;">⏰</div>
+            <div class="game-card-text">
+              <h4 data-i18n="playSeqGame">দৈনিক কামৰ ক্ৰম খেল</h4>
+              <p data-i18n="playSeqDesc">ৰাতিপুৱাৰ কামসমূহ সঠিক ক্ৰমত সজাওক।</p>
+            </div>
+          </div>
+          <div class="game-metrics-pill">
+            <span>🧩 Chronological Logic</span>
+            <span>⏱️ 4-Step Flow</span>
+          </div>
+          <button class="btn-play-game" onclick="startSequencingGame()">
+            <span>▶</span> আৰম্ভ কৰক (Play Game)
+          </button>
+        </div>
+
+        <!-- Game 3: Cultural Match -->
+        <div class="game-launch-card">
+          <div class="game-card-header">
+            <div class="game-card-icon" style="background:#f3e8ff; color:#7e22ce;">👒</div>
+            <div class="game-card-text">
+              <h4 data-i18n="playTileGame">সংস্কৃতিৰ স্মৃতি মেলা</h4>
+              <p data-i18n="playTileDesc">জাপি, গামোচা আদি সাংস্কৃতিক বস্তুবোৰ মিল কৰক।</p>
+            </div>
+          </div>
+          <div class="game-metrics-pill">
+            <span>🏛️ Regional Artifacts</span>
+            <span>🎴 Pair Matching</span>
+          </div>
+          <button class="btn-play-game" onclick="startCulturalMatchGame()">
+            <span>▶</span> আৰম্ভ কৰক (Play Game)
+          </button>
+        </div>
+
+        <!-- Game 4: Sound & Echo Memory -->
+        <div class="game-launch-card">
+          <div class="game-card-header">
+            <div class="game-card-icon" style="background:#ccfbf1; color:#0f766e;">🔔</div>
+            <div class="game-card-text">
+              <h4 data-i18n="playSoundGame">শব্দ আৰু ধ্বনি স্মৃতি</h4>
+              <p data-i18n="playSoundDesc">পাহাৰীয়া বাঁহী আৰু চৰাইৰ মাত শুনি চিনি পাওক।</p>
+            </div>
+          </div>
+          <div class="game-metrics-pill">
+            <span>🎵 Auditory Stimulus</span>
+            <span>👂 Zen Resonance</span>
+          </div>
+          <button class="btn-play-game" onclick="startSoundMemoryGame()">
+            <span>▶</span> আৰম্ভ কৰক (Play Game)
+          </button>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         VIEW 2: CAREGIVER & CLINICIAN DASHBOARD
+         ----------------------------------------------------------------------- -->
+    <section id="caregiverView" class="caregiver-container" style="display:none;">
+      
+      <!-- Caregiver Top Hero Banner -->
+      <div class="caregiver-hero-banner">
+        <div class="caregiver-hero-left">
+          <h2>
+            <span>🩺</span> Caregiver Telemetry & Clinical Console
+          </h2>
+          <p>
+            Monitoring: <strong>Biren Hazarika (74 yrs)</strong> • Condition: <strong>Mild Cognitive Impairment (AD Stage 3)</strong> • Location: Guwahati
+          </p>
+        </div>
+
+        <div class="hero-stats-row">
+          <div class="hero-stat-card">
+            <div class="stat-value" id="caregiverCogIndex">78/100</div>
+            <div class="stat-label">Cognitive Index</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="stat-value">22/30</div>
+            <div class="stat-label">MMSE Score</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="stat-value" id="caregiverLatency">1.42s</div>
+            <div class="stat-label">Avg Reaction Speed</div>
+          </div>
+          <div class="hero-stat-card">
+            <div class="stat-value" style="color:#22c55e;">94%</div>
+            <div class="stat-label">Medication Adherence</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Telemetry Charts & Anomaly Feed -->
+      <div class="analytics-grid">
+        <div class="dashboard-card">
+          <h3>
+            <span>📈 30-Day Cognitive Baseline & Latency Trajectory</span>
+            <span style="font-size:13px; font-weight:600; color:var(--primary-teal);">● AI Trend Stable</span>
+          </h3>
+          <div class="chart-container">
+            <canvas id="cognitiveTrendChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>
+            <span>🚨 Clinical Alerts & Anomaly Feed</span>
+            <span style="font-size:13px; font-weight:600; color:#ef4444;">● 3 Recent Flags</span>
+          </h3>
+          <div class="alerts-list" id="caregiverAlertsList">
+            <!-- Dynamic alerts -->
+          </div>
+        </div>
+      </div>
+
+      <!-- MMSE Radar & Management Modules -->
+      <div class="mgmt-grid">
+        <div class="dashboard-card">
+          <h3>
+            <span>🕸️ MMSE 6-Domain Cognitive Radar</span>
+            <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Standard Clinical Mapping</span>
+          </h3>
+          <div class="chart-container">
+            <canvas id="mmseRadarChart"></canvas>
+          </div>
+        </div>
+
+        <div class="dashboard-card">
+          <h3>
+            <span>📸 Reminiscence Vault Management</span>
+            <button class="btn-play-game" style="padding:6px 14px; font-size:13px;" onclick="alert('Photo uploader: In real deployment, caregiver attaches new family photos and records audio notes.')">
+              + Add Photo
+            </button>
+          </h3>
+          <p style="font-size:14px; color:var(--text-muted);">
+            Family photographs tagged for memory recall games and sundowning calming therapy:
+          </p>
+
+          <div class="vault-grid-preview">
+            <div class="vault-card-thumb">
+              <img src="assets/daughter.jpg" alt="Daughter">
+              <div class="vault-tag">Priya (Daughter)</div>
+            </div>
+            <div class="vault-card-thumb">
+              <img src="assets/family.jpg" alt="Family">
+              <div class="vault-tag">Family Tea</div>
+            </div>
+            <div class="vault-card-thumb">
+              <img src="assets/assam_tea.jpg" alt="Tea Garden">
+              <div class="vault-tag">Assam Nature</div>
+            </div>
+            <div class="vault-card-thumb">
+              <img src="assets/elder_dadu.jpg" alt="Self">
+              <div class="vault-tag">Self Anchor</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         VIEW 3: DUAL SCREEN / LIVE MIRROR DEMO
+         ----------------------------------------------------------------------- -->
+    <section id="mirrorView" style="display:none;">
+      <div class="dual-mirror-wrapper">
+        <!-- Left: Phone Simulator Frame -->
+        <div class="phone-mockup-frame">
+          <div class="phone-speaker-notch"></div>
+          <div style="padding:10px; color:white; display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px;">
+            <span>08:30 AM</span>
+            <span>🔋 88% • 📶 Offline Ready</span>
+          </div>
+          
+          <div style="background:var(--bg-primary); border-radius:24px; padding:16px; min-height:600px;">
+            <div style="text-align:center; margin-bottom:14px;">
+              <img src="assets/elder_dadu.jpg" style="width:64px; height:64px; border-radius:50%; border:3px solid #0d9488;">
+              <h4 style="font-size:16px; color:#064e3b; margin-top:4px;">নমস্কাৰ, বীৰেন বাবু!</h4>
+            </div>
+
+            <button class="btn-play-game" style="width:100%; margin-bottom:12px; font-size:15px;" onclick="startFaceRecallGame()">
+              👨‍👩‍👧 Play Family Recall Game
+            </button>
+
+            <button class="btn-play-game" style="width:100%; margin-bottom:12px; font-size:15px; background:#f59e0b;" onclick="openCalmReminiscenceModal()">
+              🌅 Calm Me Down Therapy
+            </button>
+
+            <div style="background:#fefce8; padding:12px; border-radius:14px; border:1px solid #facc15; font-size:13px; text-align:center;">
+              💊 Next: Donepezil (5mg) at 08:30 AM
+              <button class="btn-med-taken" style="margin:8px auto 0; font-size:13px; padding:6px 14px;" onclick="markMedicationTaken('med-1')">
+                ✓ Confirm Taken
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Real-time Caregiver Telemetry Reflection -->
+        <div>
+          <div class="dashboard-card" style="margin-bottom:20px;">
+            <h3>
+              <span>⚡ Real-Time Cloud Telemetry Feed</span>
+              <span class="sync-status-indicator">
+                <span class="sync-dot"></span> Live Syncing
+              </span>
+            </h3>
+            <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">
+              Watch how interactions on the patient's mobile device (playing games, confirming medications, or requesting voice assistance) instantaneously reflect on the Caregiver & Clinician monitoring console.
+            </p>
+            <div class="alerts-list">
+              <div class="alert-item info">
+                <div class="alert-icon">🔄</div>
+                <div class="alert-content">
+                  <h5>Delta Sync Packet Received</h5>
+                  <p>Encrypted SQLite offline delta payload merged successfully into PostgreSQL database.</p>
+                  <div class="alert-time">Latency: 24ms</div>
+                </div>
+              </div>
+              <div class="alert-item warning">
+                <div class="alert-icon">🧠</div>
+                <div class="alert-content">
+                  <h5>DDA Algorithm Adjusted Game Parameters</h5>
+                  <p>Dynamic difficulty adjusted to Level 2 based on patient response latency trend.</p>
+                  <div class="alert-time">Active Parameter: 25s window + audio hint</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="dashboard-card">
+            <h3>📈 Live Cognitive Health Status</h3>
+            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; text-align:center;">
+              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
+                <div style="font-size:24px; font-weight:800; color:var(--primary-teal);">78/100</div>
+                <div style="font-size:12px; color:var(--text-muted);">Cognitive Baseline</div>
+              </div>
+              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
+                <div style="font-size:24px; font-weight:800; color:var(--primary-blue);">1.42s</div>
+                <div style="font-size:12px; color:var(--text-muted);">Reaction Speed</div>
+              </div>
+              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
+                <div style="font-size:24px; font-weight:800; color:#16a34a;">94%</div>
+                <div style="font-size:12px; color:var(--text-muted);">Medication Rate</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- =========================================================================
+       GAME & REMINISCENCE MODAL ARENA
+       ========================================================================= -->
+  <div id="gameModal" class="modal-backdrop">
+    <div class="game-modal-container">
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close Game">✕</button>
+      <div id="gameContainer">
+        <!-- Injected Game Arenas -->
+      </div>
+    </div>
+  </div>
+
+  <!-- =========================================================================
+       FLOATING MULTILINGUAL VOICE ASSISTANT BUTTON
+       ========================================================================= -->
+  <button id="voiceFab" class="voice-fab" aria-label="Speak with Smriti AI Assistant" title="Speak to Smriti">
+    🎙️
+  </button>
+
+  <!-- Application Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
