@@ -1,5 +1,5 @@
 """
-Standalone Test Runner using standard library unittest for Smriti Sahayak.
+Standalone Test Runner using standard library unittest for Smriti Sahayak Tri-Portal.
 """
 import unittest
 import sys
@@ -11,6 +11,19 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')
 from app.services.dda_algorithm import dda_engine
 from app.services.ml_cognitive_engine import cognitive_engine
 from app.services.speech_service import speech_service
+from app.main import (
+    app,
+    get_doctor_patients,
+    get_prescriptions,
+    create_prescription,
+    PrescriptionCreatePayload,
+    post_caregiver_message,
+    CaregiverMessagePayload,
+    generate_clinical_report,
+    ReportRequestPayload,
+    add_clinical_note,
+    ClinicalNotePayload
+)
 
 class TestSmritiServices(unittest.TestCase):
 
@@ -57,6 +70,60 @@ class TestSmritiServices(unittest.TestCase):
         self.assertEqual(res["intent"], "confusion_grounding")
         self.assertTrue(res["requires_grounding"])
         self.assertLess(res["sentiment_score"], 0.5)
+
+    def test_doctor_portal_multi_patients(self):
+        """Verify doctor can retrieve multi-patient registry"""
+        patients = get_doctor_patients()
+        self.assertGreaterEqual(len(patients), 3)
+        patient_ids = [p["id"] for p in patients]
+        self.assertIn("PAT-7401", patient_ids)
+        self.assertIn("PAT-7402", patient_ids)
+        self.assertIn("PAT-7403", patient_ids)
+
+    def test_doctor_prescription_creation_and_sync(self):
+        """Verify doctor can write prescription with multilingual audio instructions"""
+        payload = PrescriptionCreatePayload(
+            patient_id="PAT-7401",
+            name="Rivastigmine Patch",
+            dose="4.6 mg / 24 hr",
+            frequency="Once Daily",
+            time="09:00 AM",
+            clinical_rationale="Transdermal cholinesterase inhibitor",
+            instructions_en="Apply 1 skin patch on upper arm daily.",
+            instructions_as="প্ৰতিদিনে বাহুত ১টা ঔষধৰ পটি লগাওক।",
+            instructions_hi="प्रतिदिन बांह पर 1 पैच लगाएं।"
+        )
+        res = create_prescription(payload)
+        self.assertEqual(res["status"], "created")
+        self.assertIn("rx-", res["prescription"]["id"])
+
+        # Verify it is in patient's prescription list
+        rxs = get_prescriptions("PAT-7401")
+        rx_names = [r["name"] for r in rxs]
+        self.assertIn("Rivastigmine Patch", rx_names)
+
+    def test_caregiver_doctor_messaging(self):
+        """Verify caregiver and doctor bidirectional communication channel"""
+        msg_payload = CaregiverMessagePayload(
+            patient_id="PAT-7401",
+            sender_role="caregiver",
+            sender_name="Priya Hazarika (Daughter)",
+            message="Doctor, Baba slept well last night after the 8 PM medicine.",
+            urgency="normal"
+        )
+        res = post_caregiver_message(msg_payload)
+        self.assertEqual(res["status"], "sent")
+        self.assertEqual(res["message"]["sender_name"], "Priya Hazarika (Daughter)")
+
+    def test_clinical_report_generation(self):
+        """Verify synthesis of clinical telemetry into medical report"""
+        rep_payload = ReportRequestPayload(patient_id="PAT-7401")
+        report = generate_clinical_report(rep_payload)
+        self.assertIn("REP-SMRI-", report["report_id"])
+        self.assertEqual(report["patient"]["name"], "Biren Hazarika")
+        self.assertIn("composite_cognitive_index", report["telemetry_metrics"])
+        self.assertGreater(len(report["active_prescriptions"]), 0)
+        self.assertGreater(len(report["recommendations"]), 0)
 
 if __name__ == '__main__':
     unittest.main()

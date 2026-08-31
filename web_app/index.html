@@ -3,15 +3,15 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Smriti Sahayak (স্মৃতি সহায়ক) - AI Cognitive & Dementia Care Companion</title>
-  <meta name="description" content="AI-Powered Cognitive Gaming and Memory Assistance Platform for Dementia Patients with Multilingual Voice, Offline-First Architecture, and Caregiver Telemetry.">
+  <title>Smriti Sahayak (স্মৃতি সহায়ক) - AI Dementia Care Platform</title>
+  <meta name="description" content="AI-Powered Cognitive Gaming, Reminiscence Memory Assistance, and Dementia Clinical Platform with Dedicated Authenticated Portals.">
 
-  <!-- Google Fonts: Plus Jakarta Sans (Modern Clean UI) & Lora (Warm Classic) -->
+  <!-- Google Fonts: Plus Jakarta Sans (Modern UI) & Lora (Warm Clinical/Editorial) -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
-  <!-- Chart.js for Caregiver Cognitive Telemetry -->
+  <!-- Chart.js for Cognitive Telemetry & MMSE Radar -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
 
   <!-- App Stylesheet -->
@@ -20,136 +20,219 @@
 <body>
 
   <!-- =========================================================================
-       APP HEADER & GLOBAL CONTROLS
+       APP HEADER (AUTHENTICATION-RESTRICTED)
        ========================================================================= -->
   <header class="app-header">
     <div class="header-container">
-      <div class="brand-badge">
+      <div class="brand-badge" onclick="logout()" style="cursor:pointer;" title="Return to Portal Gateway">
         <div class="brand-logo-icon">🧠</div>
         <div class="brand-titles">
-          <h1>Smriti Sahayak <span style="font-size:16px; font-weight:600; color:var(--primary-teal);">(স্মৃতি সহায়ক)</span></h1>
-          <p class="slogan" data-i18n="brandSubtitle">AI Cognitive & Dementia Care Companion</p>
+          <h1>Smriti Sahayak <span class="brand-sub">(স্মৃতি সহায়ক)</span></h1>
+          <p class="slogan" data-i18n="brandSubtitle">AI Cognitive Gaming & Digital Dementia Care Ecosystem</p>
         </div>
       </div>
 
-      <!-- Mode Selector (Patient vs Caregiver vs Live Mirror) -->
-      <div class="mode-switcher">
-        <button class="mode-btn active" data-mode="patient">
-          <span>👴</span> Patient Mode
-        </button>
-        <button class="mode-btn" data-mode="caregiver">
-          <span>📊</span> Caregiver Portal
-        </button>
-        <button class="mode-btn" data-mode="mirror">
-          <span>🪟</span> Dual Screen View
+      <!-- Authenticated User Profile & Logout Bar (Shown when logged in) -->
+      <div class="session-user-badge" id="sessionUserBadge" style="display:none;">
+        <div class="user-role-indicator">
+          <span class="user-role-icon" id="headerUserIcon">🩺</span>
+          <div class="user-role-details">
+            <strong id="headerUserName">Dr. H. Baruah, MD</strong>
+            <span class="user-role-sub" id="headerUserRole">Neurologist & Geriatrician</span>
+          </div>
+        </div>
+        <button class="btn-logout" onclick="logout()" title="Logout and return to Portal Gateway">
+          <span>🚪</span> Switch Portal / Logout
         </button>
       </div>
 
       <!-- Language & Sync Indicator -->
       <div class="lang-selector-wrap">
         <select class="lang-select" id="langSelect" aria-label="Select Regional Language">
-          <option value="as" selected>অসমীয়া (Assamese)</option>
+          <option value="as">অসমীয়া (Assamese)</option>
           <option value="bn">বাংলা (Bengali)</option>
           <option value="hi">हिन्दी (Hindi)</option>
-          <option value="en">English (India)</option>
+          <option value="en" selected>English (India)</option>
         </select>
 
-        <div class="sync-status-indicator">
+        <div class="sync-status-indicator" id="globalSyncStatus" title="Offline SQLite with Cloud PostgreSQL Bi-directional Delta Sync">
           <span class="sync-dot"></span>
-          <span>Offline Ready • Synced</span>
+          <span id="syncStatusText">Synced • Offline Ready</span>
         </div>
       </div>
     </div>
   </header>
 
   <!-- =========================================================================
-       MAIN CONTENT ROUTER / VIEWS
+       MAIN CONTENT ROUTER (GATEWAY, PATIENT, CAREGIVER, DOCTOR)
        ========================================================================= -->
   <main class="main-wrapper">
 
     <!-- -----------------------------------------------------------------------
-         VIEW 1: PATIENT SENIOR ACCESSIBLE COMPANION
+         VIEW 0: 🔐 SECURE PORTAL LOGIN GATEWAY
          ----------------------------------------------------------------------- -->
-    <section id="patientView" class="patient-view-container">
+    <section id="loginGatewayView" class="portal-view gateway-container">
+      <div class="gateway-hero">
+        <div class="gateway-hero-badge">🔐 Role-Based Access Control</div>
+        <h2>Welcome to Smriti Sahayak Digital Ecosystem</h2>
+        <p>Please select your authorized portal to sign in. Access is strictly isolated per role.</p>
+      </div>
+
+      <div class="gateway-cards-grid">
+        
+        <!-- Role 1: Patient Companion Login -->
+        <div class="gateway-card patient-gate">
+          <div class="gate-icon-wrap" style="background:#dcfce7; color:#15803d;">👴</div>
+          <div class="gate-title-block">
+            <span class="gate-role-pill">Patient Companion</span>
+            <h3>Biren Babu</h3>
+            <p>Senior-accessible interface with voice read-outs, calming therapy, and daily cognitive games.</p>
+          </div>
+          <div class="gate-user-preview">
+            <img src="assets/elder_dadu.jpg" alt="Biren Hazarika" class="gate-avatar">
+            <div>
+              <strong>Biren Hazarika (74 Yrs)</strong>
+              <span>Guwahati, Assam</span>
+            </div>
+          </div>
+          <button class="btn-gate-login patient-btn" onclick="loginAs('patient')">
+            <span>🚀</span> Enter Patient Companion
+          </button>
+        </div>
+
+        <!-- Role 2: Caregiver / Family Portal Login -->
+        <div class="gateway-card caregiver-gate">
+          <div class="gate-icon-wrap" style="background:#fef3c7; color:#b45309;">👨‍👩‍👧</div>
+          <div class="gate-title-block">
+            <span class="gate-role-pill" style="background:#fef3c7; color:#b45309;">Family Caregiver</span>
+            <h3>Priya Hazarika</h3>
+            <p>Family care desk: Live GPS status, reminiscence vault manager, and doctor consultation chat.</p>
+          </div>
+          <div class="gate-user-preview">
+            <img src="assets/daughter.jpg" alt="Priya Hazarika" class="gate-avatar">
+            <div>
+              <strong>Priya Hazarika (Daughter)</strong>
+              <span>Primary Family Caregiver</span>
+            </div>
+          </div>
+          <div class="gate-credentials-hint">
+            <span>🔑 Demo ID: <code>priya@smriti.care</code></span>
+          </div>
+          <button class="btn-gate-login caregiver-btn" onclick="loginAs('caregiver')">
+            <span>🔑</span> Sign In as Caregiver
+          </button>
+        </div>
+
+        <!-- Role 3: Doctor / Neurologist Console Login -->
+        <div class="gateway-card doctor-gate">
+          <div class="gate-icon-wrap" style="background:#dbeafe; color:#1d4ed8;">🩺</div>
+          <div class="gate-title-block">
+            <span class="gate-role-pill" style="background:#dbeafe; color:#1d4ed8;">Neurologist Console</span>
+            <h3>Dr. H. Baruah, MD</h3>
+            <p>Clinical telemetry, MMSE 6-Domain radar, prescription manager, and official medical reports.</p>
+          </div>
+          <div class="gate-user-preview">
+            <div class="gate-doc-avatar">🩺</div>
+            <div>
+              <strong>Dr. H. Baruah, MD, DM</strong>
+              <span>License: MCI-78401</span>
+            </div>
+          </div>
+          <div class="gate-credentials-hint">
+            <span>🔒 Demo ID: <code>dr.baruah@neuro.care</code></span>
+          </div>
+          <button class="btn-gate-login doctor-btn" onclick="loginAs('doctor')">
+            <span>🩺</span> Sign In as Neurologist
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- -----------------------------------------------------------------------
+         PORTAL 1: 👴 PATIENT SENIOR ACCESSIBLE COMPANION (Isolated)
+         ----------------------------------------------------------------------- -->
+    <section id="patientView" class="portal-view patient-view-container" style="display:none;">
       
-      <!-- Welcome Patient Card -->
+      <!-- Patient Welcome & Anchor Banner -->
       <div class="patient-welcome-card">
         <div class="patient-avatar-block">
           <img src="assets/elder_dadu.jpg" alt="Biren Babu" class="patient-photo">
           <div class="patient-info">
-            <h2 data-i18n="patientGreeting">নমস্কাৰ, বীৰেন হাজৰিকা ডাঙৰীয়া!</h2>
+            <h2 data-i18n="patientGreeting">Namaskar, Biren Babu!</h2>
             <div class="patient-date-badge">
               <span>📅</span>
-              <span data-i18n="patientDate">সোমবাৰ, ৩১ আগষ্ট ২০২৬</span>
+              <span id="patientLiveDate" data-i18n="patientDate">Monday, 31 August 2026</span>
+              <span class="time-badge" id="patientLiveTime">08:30 AM</span>
             </div>
           </div>
         </div>
 
-        <button class="voice-greet-btn" onclick="simulateVoiceResponse()">
+        <button class="voice-greet-btn" onclick="simulateVoiceResponse()" id="btnVoiceGreeting">
           <span>🔊</span>
-          <span data-i18n="voiceGreet">ৰাতিপুৱাৰ শুভবাৰ্তা শুনক</span>
+          <span data-i18n="voiceGreet">Listen to Daily Greeting</span>
         </button>
       </div>
 
-      <!-- Live Medication Banner -->
+      <!-- Spoken Medication Alert Banner -->
       <div id="patientMedBanner" class="med-alert-banner">
-        <!-- Injected via JavaScript -->
+        <!-- Injected via JavaScript from active prescriptions -->
       </div>
 
       <!-- Sensory & Emergency Quick Hub -->
       <div class="sensory-hub-grid">
-        <div class="hub-card calm-mode" onclick="openCalmReminiscenceModal()">
+        <div class="hub-card calm-mode" onclick="openCalmReminiscenceModal()" id="btnPatientCalm">
           <div class="hub-icon-wrap" style="background:#fef08a; color:#854d0e;">🌅</div>
           <div>
-            <h3 data-i18n="calmModalTitle">শান্ত মন আৰু স্মৃতি মঞ্জুষা</h3>
-            <p data-i18n="calmModalDesc">মৰমৰ স্মৃতি আৰু সহজ উশাহ-নিশাহেৰে মন শান্ত কৰক।</p>
+            <h3 data-i18n="calmModalTitle">Calm Me Down & Reminiscence</h3>
+            <p data-i18n="calmModalDesc">Relax your mind with familiar sights, tea garden sounds, and guided breathing.</p>
           </div>
         </div>
 
-        <div class="hub-card sos-mode" onclick="triggerSOS()">
+        <div class="hub-card sos-mode" onclick="triggerSOS()" id="btnPatientSOS">
           <div class="hub-icon-wrap" style="background:#fecdd3; color:#9f1239;">🚨</div>
           <div>
-            <h3 data-i18n="sosTitle">জৰুৰীকালীন সহায় সংকেত</h3>
-            <p data-i18n="sosDesc">প্ৰিয়া আৰু চিকিৎসকৰ সৈতে তৎক্ষণাৎ সংযোগ কৰক।</p>
+            <h3 data-i18n="sosTitle">Emergency Wander Assistance</h3>
+            <p data-i18n="sosDesc">One-touch emergency call to daughter Priya & Dr. Baruah beacon alert.</p>
           </div>
         </div>
       </div>
 
-      <!-- Cognitive Games Selection -->
+      <!-- Daily Routine & Cognitive Gaming Section -->
       <div class="section-title-wrap">
-        <h3 data-i18n="gamesHeading">দৈনন্দিন স্মৃতি চৰ্চা খেল</h3>
-        <div class="dda-badge">
+        <h3 data-i18n="gamesHeading">Daily Cognitive Exercises</h3>
+        <div class="dda-badge" title="Dynamic Difficulty Adjustment Engine active">
           <span>🧠</span>
-          <span data-i18n="ddaTitle">স্বয়ংক্ৰিয় এআই স্তৰ সক্ৰিয়</span>
+          <span data-i18n="ddaTitle">Adaptive AI Engine Active (Level 2)</span>
         </div>
       </div>
 
       <div class="games-grid">
         <!-- Game 1: Face & Family Recall -->
-        <div class="game-launch-card">
+        <div class="game-launch-card" id="cardGameFace">
           <div class="game-card-header">
             <div class="game-card-icon" style="background:#e0f2fe; color:#0369a1;">👨‍👩‍👧</div>
             <div class="game-card-text">
-              <h4 data-i18n="playFaceGame">পৰিয়াল চিনি পোৱা খেল</h4>
-              <p data-i18n="playFaceDesc">আপোনাৰ মৰমৰ পৰিয়াল আৰু আত্মীয়সকলক মনত পেলাওক।</p>
+              <h4 data-i18n="playFaceGame">Family Recall Game ("Mukhobayav")</h4>
+              <p data-i18n="playFaceDesc">Recognize your beloved daughter Priya and family members with voice anchors.</p>
             </div>
           </div>
           <div class="game-metrics-pill">
-            <span>🎯 Memory Retention</span>
+            <span>🎯 Facial Recognition</span>
             <span>⚡ Visual Anchor</span>
           </div>
           <button class="btn-play-game" onclick="startFaceRecallGame()">
-            <span>▶</span> আৰম্ভ কৰক (Play Game)
+            <span>▶</span> Play Game
           </button>
         </div>
 
         <!-- Game 2: Daily Sequencing -->
-        <div class="game-launch-card">
+        <div class="game-launch-card" id="cardGameSeq">
           <div class="game-card-header">
             <div class="game-card-icon" style="background:#fef3c7; color:#b45309;">⏰</div>
             <div class="game-card-text">
-              <h4 data-i18n="playSeqGame">দৈনিক কামৰ ক্ৰম খেল</h4>
-              <p data-i18n="playSeqDesc">ৰাতিপুৱাৰ কামসমূহ সঠিক ক্ৰমত সজাওক।</p>
+              <h4 data-i18n="playSeqGame">Daily Routine Sequencing ("Dainik Kram")</h4>
+              <p data-i18n="playSeqDesc">Arrange morning tea, medicine, garden walk, and bath in chronological order.</p>
             </div>
           </div>
           <div class="game-metrics-pill">
@@ -157,17 +240,17 @@
             <span>⏱️ 4-Step Flow</span>
           </div>
           <button class="btn-play-game" onclick="startSequencingGame()">
-            <span>▶</span> আৰম্ভ কৰক (Play Game)
+            <span>▶</span> Play Game
           </button>
         </div>
 
         <!-- Game 3: Cultural Match -->
-        <div class="game-launch-card">
+        <div class="game-launch-card" id="cardGameCulture">
           <div class="game-card-header">
             <div class="game-card-icon" style="background:#f3e8ff; color:#7e22ce;">👒</div>
             <div class="game-card-text">
-              <h4 data-i18n="playTileGame">সংস্কৃতিৰ স্মৃতি মেলা</h4>
-              <p data-i18n="playTileDesc">জাপি, গামোচা আদি সাংস্কৃতিক বস্তুবোৰ মিল কৰক।</p>
+              <h4 data-i18n="playTileGame">Cultural Memory Match ("Sanskriti Mel")</h4>
+              <p data-i18n="playTileDesc">Pair familiar regional symbols: Japi (জাপী), Gamosa (গামোচা), Brass Bell, Flute.</p>
             </div>
           </div>
           <div class="game-metrics-pill">
@@ -175,17 +258,17 @@
             <span>🎴 Pair Matching</span>
           </div>
           <button class="btn-play-game" onclick="startCulturalMatchGame()">
-            <span>▶</span> আৰম্ভ কৰক (Play Game)
+            <span>▶</span> Play Game
           </button>
         </div>
 
         <!-- Game 4: Sound & Echo Memory -->
-        <div class="game-launch-card">
+        <div class="game-launch-card" id="cardGameSound">
           <div class="game-card-header">
             <div class="game-card-icon" style="background:#ccfbf1; color:#0f766e;">🔔</div>
             <div class="game-card-text">
-              <h4 data-i18n="playSoundGame">শব্দ আৰু ধ্বনি স্মৃতি</h4>
-              <p data-i18n="playSoundDesc">পাহাৰীয়া বাঁহী আৰু চৰাইৰ মাত শুনি চিনি পাওক।</p>
+              <h4 data-i18n="playSoundGame">Sound & Echo Memory ("Dhwani Smriti")</h4>
+              <p data-i18n="playSoundDesc">Listen to soothing temple bells, cuckoo song, and flowing stream sounds.</p>
             </div>
           </div>
           <div class="game-metrics-pill">
@@ -193,26 +276,39 @@
             <span>👂 Zen Resonance</span>
           </div>
           <button class="btn-play-game" onclick="startSoundMemoryGame()">
-            <span>▶</span> আৰম্ভ কৰক (Play Game)
+            <span>▶</span> Play Game
           </button>
+        </div>
+      </div>
+
+      <!-- Today's Routine Schedule Card -->
+      <div class="patient-schedule-card">
+        <div class="schedule-header">
+          <h3>📋 Biren Babu's Daily Schedule</h3>
+          <span class="schedule-tag">4 of 6 Completed</span>
+        </div>
+        <div class="schedule-list" id="patientScheduleList">
+          <!-- Injected via JS -->
         </div>
       </div>
 
     </section>
 
     <!-- -----------------------------------------------------------------------
-         VIEW 2: CAREGIVER & CLINICIAN DASHBOARD
+         PORTAL 2: 👨‍👩‍👧 CAREGIVER / FAMILY PORTAL (Priya - Daughter) (Isolated)
          ----------------------------------------------------------------------- -->
-    <section id="caregiverView" class="caregiver-container" style="display:none;">
+    <section id="caregiverView" class="portal-view caregiver-container" style="display:none;">
       
-      <!-- Caregiver Top Hero Banner -->
+      <!-- Caregiver Persona Top Banner -->
       <div class="caregiver-hero-banner">
         <div class="caregiver-hero-left">
-          <h2>
-            <span>🩺</span> Caregiver Telemetry & Clinical Console
-          </h2>
+          <div class="caregiver-role-tag">
+            <span>👨‍👩‍👧 Primary Family Caregiver Hub</span>
+            <span class="caregiver-id-badge">Logged in: <strong>Priya Hazarika (Daughter)</strong></span>
+          </div>
+          <h2>Family Care & Reminiscence Management Console</h2>
           <p>
-            Monitoring: <strong>Biren Hazarika (74 yrs)</strong> • Condition: <strong>Mild Cognitive Impairment (AD Stage 3)</strong> • Location: Guwahati
+            Caring for: <strong>Biren Hazarika (Father, 74 yrs)</strong> • Condition: <strong>Mild-Moderate Dementia (AD Stage 3)</strong> • Attending Neurologist: <strong>Dr. H. Baruah, MD</strong>
           </p>
         </div>
 
@@ -222,196 +318,491 @@
             <div class="stat-label">Cognitive Index</div>
           </div>
           <div class="hero-stat-card">
-            <div class="stat-value">22/30</div>
-            <div class="stat-label">MMSE Score</div>
+            <div class="stat-value" style="color:#16a34a;">Safe</div>
+            <div class="stat-label">GPS Geofence</div>
           </div>
           <div class="hero-stat-card">
             <div class="stat-value" id="caregiverLatency">1.42s</div>
             <div class="stat-label">Avg Reaction Speed</div>
           </div>
           <div class="hero-stat-card">
-            <div class="stat-value" style="color:#22c55e;">94%</div>
-            <div class="stat-label">Medication Adherence</div>
+            <div class="stat-value" style="color:#2563eb;" id="caregiverMedCompliance">94%</div>
+            <div class="stat-label">Med Compliance</div>
           </div>
         </div>
       </div>
 
-      <!-- Telemetry Charts & Anomaly Feed -->
-      <div class="analytics-grid">
+      <!-- Vitals, Geofence & Emergency Card Row -->
+      <div class="caregiver-grid-top">
+        <!-- Live Status & GPS Perimeter -->
         <div class="dashboard-card">
-          <h3>
-            <span>📈 30-Day Cognitive Baseline & Latency Trajectory</span>
-            <span style="font-size:13px; font-weight:600; color:var(--primary-teal);">● AI Trend Stable</span>
-          </h3>
-          <div class="chart-container">
-            <canvas id="cognitiveTrendChart"></canvas>
+          <div class="card-head-flex">
+            <h3>📍 Real-Time Location & Geofence Boundary</h3>
+            <span class="badge-safe">● Status: Inside Home Safe Zone</span>
+          </div>
+          <div class="geofence-widget">
+            <div class="geofence-map-sim">
+              <div class="safe-zone-circle">
+                <div class="patient-pin-pulse">
+                  <span class="pin-avatar">👴</span>
+                </div>
+                <span class="zone-label">Guwahati Home Sector 4 (500m Safe Radius)</span>
+              </div>
+            </div>
+            <div class="geofence-details">
+              <div class="detail-row">
+                <span>Current Location:</span>
+                <strong>Living Room / Veranda, Guwahati</strong>
+              </div>
+              <div class="detail-row">
+                <span>Device Battery:</span>
+                <strong style="color:#16a34a;">🔋 88% (Plugged in 2 hrs ago)</strong>
+              </div>
+              <div class="detail-row">
+                <span>Sundowning Risk:</span>
+                <strong style="color:#d97706;">🌤️ Low-Mild (Peak check at 6:00 PM)</strong>
+              </div>
+              <div class="detail-row">
+                <span>Last Activity:</span>
+                <strong>Completed Face Recall Game (Score: 85%)</strong>
+              </div>
+            </div>
           </div>
         </div>
 
+        <!-- Direct Doctor Communication Desk -->
+        <div class="dashboard-card chat-card">
+          <div class="card-head-flex">
+            <h3>💬 Direct Clinical Chat with Dr. H. Baruah</h3>
+            <span class="doctor-badge-online">● Neurologist Available</span>
+          </div>
+          <div class="chat-thread-container" id="caregiverChatMessages">
+            <!-- Dynamic chat messages -->
+          </div>
+          <div class="chat-input-wrapper">
+            <div class="quick-chips">
+              <button class="chip-btn" onclick="prefillChat('Doctor, Baba seems slightly anxious this evening after tea.')">Evening Anxious?</button>
+              <button class="chip-btn" onclick="prefillChat('Confirming Donepezil morning dose was taken successfully.')">Med Confirmed</button>
+              <button class="chip-btn" onclick="prefillChat('When should we come for our next in-clinic follow-up?')">Next Visit?</button>
+            </div>
+            <div class="chat-form-row">
+              <input type="text" id="caregiverChatInput" placeholder="Type a message or clinical question for Dr. Baruah..." />
+              <button class="btn-send-msg" onclick="sendCaregiverMessage()">Send ✉️</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Reminiscence Vault Studio & Medication Tracker -->
+      <div class="caregiver-grid-bottom">
+        
+        <!-- Reminiscence Vault Manager -->
         <div class="dashboard-card">
-          <h3>
-            <span>🚨 Clinical Alerts & Anomaly Feed</span>
-            <span style="font-size:13px; font-weight:600; color:#ef4444;">● 3 Recent Flags</span>
-          </h3>
+          <div class="card-head-flex">
+            <div>
+              <h3>📸 Family Reminiscence Vault Studio</h3>
+              <p class="card-subtitle">Manage photos & recorded audio notes used during calming therapy and recall games.</p>
+            </div>
+            <button class="btn-primary-action" onclick="openAddVaultModal()">
+              <span>+</span> Add Family Memory
+            </button>
+          </div>
+
+          <div class="vault-grid-preview" id="caregiverVaultGrid">
+            <!-- Dynamic Vault Items -->
+          </div>
+        </div>
+
+        <!-- Caregiver Routine & Alert Logs -->
+        <div class="dashboard-card">
+          <div class="card-head-flex">
+            <h3>🚨 Real-Time Activity & Anomaly Feed</h3>
+            <span class="badge-alert-count">Live Stream</span>
+          </div>
           <div class="alerts-list" id="caregiverAlertsList">
             <!-- Dynamic alerts -->
           </div>
         </div>
-      </div>
 
-      <!-- MMSE Radar & Management Modules -->
-      <div class="mgmt-grid">
-        <div class="dashboard-card">
-          <h3>
-            <span>🕸️ MMSE 6-Domain Cognitive Radar</span>
-            <span style="font-size:13px; font-weight:600; color:var(--text-muted);">Standard Clinical Mapping</span>
-          </h3>
-          <div class="chart-container">
-            <canvas id="mmseRadarChart"></canvas>
-          </div>
-        </div>
-
-        <div class="dashboard-card">
-          <h3>
-            <span>📸 Reminiscence Vault Management</span>
-            <button class="btn-play-game" style="padding:6px 14px; font-size:13px;" onclick="alert('Photo uploader: In real deployment, caregiver attaches new family photos and records audio notes.')">
-              + Add Photo
-            </button>
-          </h3>
-          <p style="font-size:14px; color:var(--text-muted);">
-            Family photographs tagged for memory recall games and sundowning calming therapy:
-          </p>
-
-          <div class="vault-grid-preview">
-            <div class="vault-card-thumb">
-              <img src="assets/daughter.jpg" alt="Daughter">
-              <div class="vault-tag">Priya (Daughter)</div>
-            </div>
-            <div class="vault-card-thumb">
-              <img src="assets/family.jpg" alt="Family">
-              <div class="vault-tag">Family Tea</div>
-            </div>
-            <div class="vault-card-thumb">
-              <img src="assets/assam_tea.jpg" alt="Tea Garden">
-              <div class="vault-tag">Assam Nature</div>
-            </div>
-            <div class="vault-card-thumb">
-              <img src="assets/elder_dadu.jpg" alt="Self">
-              <div class="vault-tag">Self Anchor</div>
-            </div>
-          </div>
-        </div>
       </div>
 
     </section>
 
     <!-- -----------------------------------------------------------------------
-         VIEW 3: DUAL SCREEN / LIVE MIRROR DEMO
+         PORTAL 3: 🩺 DOCTOR / CLINICIAN CONSOLE (Dr. H. Baruah, MD) (Isolated)
          ----------------------------------------------------------------------- -->
-    <section id="mirrorView" style="display:none;">
-      <div class="dual-mirror-wrapper">
-        <!-- Left: Phone Simulator Frame -->
-        <div class="phone-mockup-frame">
-          <div class="phone-speaker-notch"></div>
-          <div style="padding:10px; color:white; display:flex; justify-content:space-between; font-size:12px; margin-bottom:10px;">
-            <span>08:30 AM</span>
-            <span>🔋 88% • 📶 Offline Ready</span>
+    <section id="doctorView" class="portal-view doctor-container" style="display:none;">
+      
+      <!-- Doctor Persona Header -->
+      <div class="doctor-hero-banner">
+        <div class="doctor-hero-left">
+          <div class="doctor-role-tag">
+            <span>🩺 Neurological & Geriatric Clinical Console</span>
+            <span class="doctor-id-badge">Logged in: <strong>Dr. H. Baruah, MD (Neurology), DM</strong></span>
           </div>
-          
-          <div style="background:var(--bg-primary); border-radius:24px; padding:16px; min-height:600px;">
-            <div style="text-align:center; margin-bottom:14px;">
-              <img src="assets/elder_dadu.jpg" style="width:64px; height:64px; border-radius:50%; border:3px solid #0d9488;">
-              <h4 style="font-size:16px; color:#064e3b; margin-top:4px;">নমস্কাৰ, বীৰেন বাবু!</h4>
-            </div>
-
-            <button class="btn-play-game" style="width:100%; margin-bottom:12px; font-size:15px;" onclick="startFaceRecallGame()">
-              👨‍👩‍👧 Play Family Recall Game
-            </button>
-
-            <button class="btn-play-game" style="width:100%; margin-bottom:12px; font-size:15px; background:#f59e0b;" onclick="openCalmReminiscenceModal()">
-              🌅 Calm Me Down Therapy
-            </button>
-
-            <div style="background:#fefce8; padding:12px; border-radius:14px; border:1px solid #facc15; font-size:13px; text-align:center;">
-              💊 Next: Donepezil (5mg) at 08:30 AM
-              <button class="btn-med-taken" style="margin:8px auto 0; font-size:13px; padding:6px 14px;" onclick="markMedicationTaken('med-1')">
-                ✓ Confirm Taken
-              </button>
-            </div>
-          </div>
+          <h2>Dementia Telemetry, Pharmacotherapy & Cognitive Assessment</h2>
+          <p>
+            Clinical Center: <strong>Guwahati Neurological & Geriatric Cognitive Health Center</strong> • Telemetry Protocol: <strong>MMSE-DDA-v2</strong>
+          </p>
         </div>
 
-        <!-- Right: Real-time Caregiver Telemetry Reflection -->
-        <div>
-          <div class="dashboard-card" style="margin-bottom:20px;">
-            <h3>
-              <span>⚡ Real-Time Cloud Telemetry Feed</span>
-              <span class="sync-status-indicator">
-                <span class="sync-dot"></span> Live Syncing
-              </span>
-            </h3>
-            <p style="font-size:14px; color:var(--text-muted); margin-bottom:16px;">
-              Watch how interactions on the patient's mobile device (playing games, confirming medications, or requesting voice assistance) instantaneously reflect on the Caregiver & Clinician monitoring console.
-            </p>
-            <div class="alerts-list">
-              <div class="alert-item info">
-                <div class="alert-icon">🔄</div>
-                <div class="alert-content">
-                  <h5>Delta Sync Packet Received</h5>
-                  <p>Encrypted SQLite offline delta payload merged successfully into PostgreSQL database.</p>
-                  <div class="alert-time">Latency: 24ms</div>
-                </div>
-              </div>
-              <div class="alert-item warning">
-                <div class="alert-icon">🧠</div>
-                <div class="alert-content">
-                  <h5>DDA Algorithm Adjusted Game Parameters</h5>
-                  <p>Dynamic difficulty adjusted to Level 2 based on patient response latency trend.</p>
-                  <div class="alert-time">Active Parameter: 25s window + audio hint</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div class="dashboard-card">
-            <h3>📈 Live Cognitive Health Status</h3>
-            <div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:16px; text-align:center;">
-              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
-                <div style="font-size:24px; font-weight:800; color:var(--primary-teal);">78/100</div>
-                <div style="font-size:12px; color:var(--text-muted);">Cognitive Baseline</div>
-              </div>
-              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
-                <div style="font-size:24px; font-weight:800; color:var(--primary-blue);">1.42s</div>
-                <div style="font-size:12px; color:var(--text-muted);">Reaction Speed</div>
-              </div>
-              <div style="background:var(--bg-elevated); padding:16px; border-radius:14px;">
-                <div style="font-size:24px; font-weight:800; color:#16a34a;">94%</div>
-                <div style="font-size:12px; color:var(--text-muted);">Medication Rate</div>
-              </div>
-            </div>
+        <!-- Patient Case Selector -->
+        <div class="doctor-patient-selector-card">
+          <label for="doctorPatientSelect"><strong>Assigned Patient Case:</strong></label>
+          <select id="doctorPatientSelect" class="patient-select-dropdown" onchange="onDoctorSelectPatient(this.value)">
+            <option value="PAT-7401" selected>PAT-7401: Biren Hazarika (74M) - Stage 3 AD</option>
+            <option value="PAT-7402">PAT-7402: Anjali Devi (71F) - Early MCI</option>
+            <option value="PAT-7403">PAT-7403: Naren Phukan (79M) - Stage 4 AD (Wander Risk)</option>
+          </select>
+          <div class="doctor-quick-actions">
+            <button class="btn-report-export" onclick="openClinicalReportModal()">
+              <span>📄</span> Generate Clinical Report
+            </button>
+            <button class="btn-new-rx" onclick="openNewPrescriptionModal()">
+              <span>💊</span> Write / Adjust Rx
+            </button>
           </div>
         </div>
       </div>
+
+      <!-- Clinical Diagnostic Vitals -->
+      <div class="clinical-vitals-row" id="doctorVitalsRow">
+        <div class="clinical-vital-card">
+          <div class="vital-label">Cognitive Baseline Index</div>
+          <div class="vital-value" id="docCogIndex">78.0<span class="vital-unit">/100</span></div>
+          <div class="vital-trend trend-up">● AI Trend Stable</div>
+        </div>
+        <div class="clinical-vital-card">
+          <div class="vital-label">Estimated MMSE Score</div>
+          <div class="vital-value" id="docMmseScore">22.0<span class="vital-unit">/30</span></div>
+          <div class="vital-sub">Standardized Clinical Range</div>
+        </div>
+        <div class="clinical-vital-card">
+          <div class="vital-label">Mean Latency & Variance</div>
+          <div class="vital-value" id="docLatency">1.42s<span class="vital-unit">±120ms</span></div>
+          <div class="vital-sub">Healthy AD Target &lt; 1.6s</div>
+        </div>
+        <div class="clinical-vital-card">
+          <div class="vital-label">Dementia FAST Staging</div>
+          <div class="vital-value" style="font-size:18px; color:var(--primary-blue);" id="docFastStage">Stage 3</div>
+          <div class="vital-sub">Mild Cognitive Impairment</div>
+        </div>
+        <div class="clinical-vital-card">
+          <div class="vital-label">Medication Adherence</div>
+          <div class="vital-value" style="color:#16a34a;" id="docMedAdherence">94%</div>
+          <div class="vital-sub">High Compliance</div>
+        </div>
+      </div>
+
+      <!-- Charts Grid: 30-Day Trajectory & MMSE Radar -->
+      <div class="doctor-charts-grid">
+        
+        <!-- 30-Day Longitudinal Chart -->
+        <div class="dashboard-card">
+          <div class="card-head-flex">
+            <h3>📈 30-Day Longitudinal Cognitive Trajectory & Latency</h3>
+            <span class="chart-legend-badge">AI Confidence: 96.4%</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="doctorTrendChart"></canvas>
+          </div>
+        </div>
+
+        <!-- MMSE 6-Domain Radar -->
+        <div class="dashboard-card">
+          <div class="card-head-flex">
+            <h3>🕸️ MMSE 6-Domain Cognitive Radar Assessment</h3>
+            <span class="chart-legend-badge">Clinical Norm Overlay</span>
+          </div>
+          <div class="chart-container">
+            <canvas id="doctorMmseRadarChart"></canvas>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Prescription Desk & Clinical Consultation Logs -->
+      <div class="doctor-mgmt-grid">
+        
+        <!-- Active Prescriptions Desk -->
+        <div class="dashboard-card">
+          <div class="card-head-flex">
+            <div>
+              <h3>💊 Digital Pharmacotherapy & Prescription Desk</h3>
+              <p class="card-subtitle">Active medications with automated multilingual voice read-outs for the patient.</p>
+            </div>
+            <button class="btn-primary-action" onclick="openNewPrescriptionModal()">
+              <span>+</span> Add Prescription
+            </button>
+          </div>
+
+          <div class="prescriptions-table-wrap">
+            <table class="prescriptions-table">
+              <thead>
+                <tr>
+                  <th>Medication & Dose</th>
+                  <th>Timing</th>
+                  <th>Clinical Rationale</th>
+                  <th>Voice Prompt</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="doctorPrescriptionsTableBody">
+                <!-- Injected via JS -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Clinical Notes & Consultation Log -->
+        <div class="dashboard-card">
+          <div class="card-head-flex">
+            <h3>📝 Longitudinal Clinical Consultation Notes</h3>
+            <button class="btn-secondary-action" onclick="openAddNoteModal()">+ Log Consultation</button>
+          </div>
+          <div class="clinical-notes-list" id="doctorClinicalNotesList">
+            <!-- Dynamic Clinical Notes -->
+          </div>
+        </div>
+
+      </div>
+
     </section>
 
   </main>
 
   <!-- =========================================================================
-       GAME & REMINISCENCE MODAL ARENA
+       MODALS ARENA
        ========================================================================= -->
+
+  <!-- Modal 1: Cognitive Game & Reminiscence Modal -->
   <div id="gameModal" class="modal-backdrop">
     <div class="game-modal-container">
-      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close Game">✕</button>
+      <button class="modal-close-btn" id="closeModalBtn" aria-label="Close Game" onclick="closeGameModal()">✕</button>
       <div id="gameContainer">
         <!-- Injected Game Arenas -->
       </div>
     </div>
   </div>
 
+  <!-- Modal 2: Doctor Add/Edit Prescription Modal -->
+  <div id="prescriptionModal" class="modal-backdrop">
+    <div class="form-modal-container">
+      <div class="modal-header">
+        <h3>💊 Write / Update Clinical Prescription</h3>
+        <button class="modal-close-btn" onclick="closePrescriptionModal()">✕</button>
+      </div>
+      <form id="newPrescriptionForm" onsubmit="handleSavePrescription(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="rxDrugName">Medication Name & Salt</label>
+            <select id="rxDrugName" class="form-input" onchange="autoFillDrugRationale(this.value)">
+              <option value="Donepezil Hydrochloride">Donepezil Hydrochloride (Cholinesterase Inhibitor)</option>
+              <option value="Memantine HCl">Memantine HCl (NMDA Receptor Antagonist)</option>
+              <option value="Rivastigmine Tartrate">Rivastigmine Tartrate (Exelon)</option>
+              <option value="Galantamine Hydrobromide">Galantamine Hydrobromide (Razadyne)</option>
+              <option value="Amlodipine Besylate">Amlodipine Besylate (Antihypertensive)</option>
+              <option value="Ginkgo Biloba Extract">Ginkgo Biloba Extract (Neuroprotective Adjunct)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="rxDose">Dosage & Strength</label>
+            <input type="text" id="rxDose" class="form-input" value="5 mg - 1 Tablet" required />
+          </div>
+
+          <div class="form-group">
+            <label for="rxFrequency">Frequency</label>
+            <select id="rxFrequency" class="form-input">
+              <option value="Once Daily (Morning)">Once Daily (Morning)</option>
+              <option value="Once Daily (Afternoon)">Once Daily (Afternoon)</option>
+              <option value="Once Daily (Evening / Bedtime)">Once Daily (Evening / Bedtime)</option>
+              <option value="Twice Daily (Morning & Night)">Twice Daily (Morning & Night)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="rxTime">Scheduled Time</label>
+            <input type="text" id="rxTime" class="form-input" value="08:30 AM" required />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="rxRationale">Clinical Rationale & Mechanism</label>
+            <input type="text" id="rxRationale" class="form-input" value="Inhibits acetylcholinesterase to maintain cognitive baseline and synaptic clarity." required />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="rxInstructionsEn">Patient Voice Readout Instructions (English)</label>
+            <input type="text" id="rxInstructionsEn" class="form-input" value="Take 1 blue tablet with water after morning tea." required />
+          </div>
+
+          <div class="form-group full-width">
+            <label for="rxInstructionsAs">Spoken Assamese Instructions (অসমীয়া)</label>
+            <input type="text" id="rxInstructionsAs" class="form-input" value="ৰাতিপুৱাৰ চাহ খোৱাৰ পিছত ১টা টেবলেট পানীৰে সৈতে লওক।" />
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closePrescriptionModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save & Sync to Patient App 💊</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 3: Caregiver Add Reminiscence Memory Vault Item -->
+  <div id="vaultModal" class="modal-backdrop">
+    <div class="form-modal-container">
+      <div class="modal-header">
+        <h3>📸 Add Family Reminiscence Memory & Audio Note</h3>
+        <button class="modal-close-btn" onclick="closeAddVaultModal()">✕</button>
+      </div>
+      <form id="newVaultForm" onsubmit="handleSaveVaultItem(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="vaultTitle">Memory Title / Person's Name</label>
+            <input type="text" id="vaultTitle" class="form-input" placeholder="e.g., Grandson Aarav, Heritage Courtyard" required />
+          </div>
+
+          <div class="form-group">
+            <label for="vaultRelation">Relationship / Context</label>
+            <select id="vaultRelation" class="form-input">
+              <option value="Daughter">Daughter (জীয়াৰী)</option>
+              <option value="Son">Son (পুত্ৰ)</option>
+              <option value="Grandchild">Grandchild (নাতি/নাতিনী)</option>
+              <option value="Spouse">Spouse (পত্নী/স্বামী)</option>
+              <option value="Family Gathering">Family Gathering (পৰিয়ালৰ মিলন)</option>
+              <option value="Childhood Home">Childhood Home / Nostalgia</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>Select Photo Preset or Upload</label>
+            <div class="photo-preset-selector">
+              <label class="photo-opt">
+                <input type="radio" name="vaultImgPreset" value="assets/daughter.jpg" checked>
+                <img src="assets/daughter.jpg" alt="Daughter">
+                <span>Priya</span>
+              </label>
+              <label class="photo-opt">
+                <input type="radio" name="vaultImgPreset" value="assets/family.jpg">
+                <img src="assets/family.jpg" alt="Family">
+                <span>Family Tea</span>
+              </label>
+              <label class="photo-opt">
+                <input type="radio" name="vaultImgPreset" value="assets/assam_tea.jpg">
+                <img src="assets/assam_tea.jpg" alt="Assam">
+                <span>Tea Garden</span>
+              </label>
+              <label class="photo-opt">
+                <input type="radio" name="vaultImgPreset" value="assets/elder_dadu.jpg">
+                <img src="assets/elder_dadu.jpg" alt="Self">
+                <span>Self Portrait</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="vaultVoiceText">Spoken Voice Comfort Message (Played when Baba views this memory)</label>
+            <textarea id="vaultVoiceText" class="form-textarea" rows="3" placeholder="Baba, this is your beloved grandson Aarav. I love you so much and will visit you this Sunday!" required></textarea>
+          </div>
+        </div>
+
+        <div class="voice-sim-box">
+          <span>🎙️ Voice Note Simulation: Custom audio synthesizer will speak this memory to Baba in regional language during reminiscence sessions.</span>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeAddVaultModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save Memory to Vault 📸</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal 4: Doctor Official Clinical Assessment Report Generator -->
+  <div id="clinicalReportModal" class="modal-backdrop">
+    <div class="report-modal-container">
+      <div class="modal-header">
+        <h3>📄 Official Clinical Dementia Assessment & Telemetry Report</h3>
+        <div class="report-header-buttons">
+          <button class="btn-print" onclick="window.print()">🖨️ Print Report</button>
+          <button class="modal-close-btn" onclick="closeClinicalReportModal()">✕</button>
+        </div>
+      </div>
+
+      <div class="clinical-report-paper" id="clinicalReportContent">
+        <!-- Injected via JavaScript from doctor report endpoint -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal 5: Doctor Log Consultation Note Modal -->
+  <div id="clinicalNoteModal" class="modal-backdrop">
+    <div class="form-modal-container">
+      <div class="modal-header">
+        <h3>📝 Log In-Clinic Consultation & Diagnostic Notes</h3>
+        <button class="modal-close-btn" onclick="closeAddNoteModal()">✕</button>
+      </div>
+      <form id="newNoteForm" onsubmit="handleSaveClinicalNote(event)">
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="noteConsultType">Consultation Type</label>
+            <select id="noteConsultType" class="form-input">
+              <option value="Monthly Telemetry & Follow-up">Monthly Telemetry & Follow-up</option>
+              <option value="Comprehensive MMSE Assessment">Comprehensive MMSE Assessment</option>
+              <option value="Pharmacotherapy Adjustment Review">Pharmacotherapy Adjustment Review</option>
+              <option value="Emergency Agitation Review">Emergency Agitation Review</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="noteMmseScore">In-Clinic MMSE Score (0-30)</label>
+            <input type="number" id="noteMmseScore" class="form-input" min="0" max="30" value="22" required />
+          </div>
+
+          <div class="form-group">
+            <label for="noteFastStage">FAST Stage</label>
+            <select id="noteFastStage" class="form-input">
+              <option value="Stage 2 (Normal Age Forgetfulness)">Stage 2 (Age-associated memory impairment)</option>
+              <option value="Stage 3 (Mild Cognitive Impairment / Early AD)" selected>Stage 3 (Mild Cognitive Impairment / Early AD)</option>
+              <option value="Stage 4 (Mild-Moderate Dementia)">Stage 4 (Mild-Moderate Dementia)</option>
+              <option value="Stage 5 (Moderate Dementia)">Stage 5 (Moderate Dementia)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="noteCdrScore">Clinical Dementia Rating (CDR)</label>
+            <select id="noteCdrScore" class="form-input">
+              <option value="0.5">0.5 (Very Mild)</option>
+              <option value="1.0" selected>1.0 (Mild Impairment)</option>
+              <option value="2.0">2.0 (Moderate Impairment)</option>
+            </select>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="noteObservations">Doctor's Clinical Observations</label>
+            <textarea id="noteObservations" class="form-textarea" rows="3" placeholder="Patient shows clear orientation to family members, stable reaction latency curve..." required></textarea>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="notePlan">Therapeutic & Behavioral Plan</label>
+            <textarea id="notePlan" class="form-textarea" rows="2" placeholder="Continue Donepezil 5mg AM, daily 15-min Reminiscence breathing sessions..." required></textarea>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closeAddNoteModal()">Cancel</button>
+          <button type="submit" class="btn-save">Save Clinical Note 📝</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- =========================================================================
        FLOATING MULTILINGUAL VOICE ASSISTANT BUTTON
        ========================================================================= -->
-  <button id="voiceFab" class="voice-fab" aria-label="Speak with Smriti AI Assistant" title="Speak to Smriti">
+  <button id="voiceFab" class="voice-fab" aria-label="Speak with Smriti AI Assistant" title="Speak to Smriti AI" style="display:none;">
     🎙️
   </button>
 

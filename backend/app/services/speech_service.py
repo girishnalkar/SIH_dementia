@@ -22,7 +22,7 @@ class MultilingualSpeechService:
             }
         }
 
-    def process_voice_query(self, transcript: str, lang: str = "as") -> Dict[str, Any]:
+    def process_voice_query(self, transcript: str, lang: str = "en") -> Dict[str, Any]:
         """
         Parses intent from patient voice query and computes confusion/agitation score.
         """
