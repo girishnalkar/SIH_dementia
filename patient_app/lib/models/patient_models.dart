@@ -127,3 +127,36 @@ class MemoryVaultItem {
     required this.audioText,
   });
 }
+
+class QuizQuestionItem {
+  final String id;
+  final String question;
+  final List<String> options;
+  final String correctOption;
+  final String hint;
+  final String category;
+  final String createdBy;
+
+  QuizQuestionItem({
+    required this.id,
+    required this.question,
+    required this.options,
+    required this.correctOption,
+    required this.hint,
+    this.category = 'Family Trivia',
+    this.createdBy = 'Priya Hazarika (Daughter)',
+  });
+
+  factory QuizQuestionItem.fromJson(Map<String, dynamic> json) {
+    return QuizQuestionItem(
+      id: json['id'] ?? 'quiz-default',
+      question: json['question'] ?? 'What is your daughter\'s name?',
+      options: List<String>.from(json['options'] ?? ['Priya', 'Sunita', 'Anjali', 'Kavita']),
+      correctOption: json['correct_option'] ?? 'Priya',
+      hint: json['hint'] ?? 'She loves and cares for you every day.',
+      category: json['category'] ?? 'Family Trivia',
+      createdBy: json['created_by'] ?? 'Priya Hazarika',
+    );
+  }
+}
+
