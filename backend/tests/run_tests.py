@@ -22,7 +22,11 @@ from app.main import (
     generate_clinical_report,
     ReportRequestPayload,
     add_clinical_note,
-    ClinicalNotePayload
+    ClinicalNotePayload,
+    QuizQuestionPayload,
+    add_caregiver_quiz_question,
+    get_caregiver_quiz_questions,
+    delete_caregiver_quiz_question
 )
 
 class TestSmritiServices(unittest.TestCase):
@@ -124,6 +128,29 @@ class TestSmritiServices(unittest.TestCase):
         self.assertIn("composite_cognitive_index", report["telemetry_metrics"])
         self.assertGreater(len(report["active_prescriptions"]), 0)
         self.assertGreater(len(report["recommendations"]), 0)
+
+    def test_caregiver_quiz_questions_crud(self):
+        """Verify caregiver can add custom trivia quiz questions for patient gaming"""
+        q_payload = QuizQuestionPayload(
+            patient_id="PAT-7401",
+            question_text="What was the name of your favorite pet dog in Shillong?",
+            options=["Tiger", "Bruno", "Tommy", "Rocky"],
+            correct_option="Bruno",
+            hint="He was a golden retriever with a brown collar.",
+            category="Childhood Pets",
+            created_by="Priya Hazarika"
+        )
+        res = add_caregiver_quiz_question(q_payload)
+        self.assertEqual(res["status"], "created")
+        q_id = res["question"]["id"]
+
+        # Fetch questions
+        questions = get_caregiver_quiz_questions("PAT-7401")
+        self.assertTrue(any(q["id"] == q_id for q in questions))
+
+        # Delete question
+        del_res = delete_caregiver_quiz_question(q_id, "PAT-7401")
+        self.assertEqual(del_res["status"], "deleted")
 
 if __name__ == '__main__':
     unittest.main()

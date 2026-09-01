@@ -111,6 +111,15 @@ class ReportRequestPayload(BaseModel):
     patient_id: str = "PAT-7401"
     include_raw_telemetry: bool = True
 
+class QuizQuestionPayload(BaseModel):
+    patient_id: str = "PAT-7401"
+    question_text: str
+    options: List[str]
+    correct_option: str
+    hint: Optional[str] = None
+    category: str = "Family Trivia"
+    created_by: str = "Priya Hazarika (Daughter)"
+
 # -----------------------------------------------------------------------------
 # In-Memory DB Store (Multi-Patient & Tri-Portal Registry)
 # -----------------------------------------------------------------------------
@@ -629,9 +638,77 @@ def generate_clinical_report(payload: ReportRequestPayload):
     }
     return report
 
+DB_QUIZ_QUESTIONS: Dict[str, List[Dict[str, Any]]] = {
+    "PAT-7401": [
+        {
+            "id": "quiz-1",
+            "question": "What is the name of your sweet granddaughter who loves tea gardens?",
+            "options": ["Ananya", "Pooja", "Sunita", "Ritu"],
+            "correct_option": "Ananya",
+            "hint": "Her name starts with A and she calls you Dadu!",
+            "category": "Family Trivia",
+            "created_by": "Priya Hazarika (Daughter)"
+        },
+        {
+            "id": "quiz-2",
+            "question": "Which historic college in Guwahati did you teach mathematics for 32 years?",
+            "options": ["Cotton College (University)", "Tezpur University", "Jorhat Engineering", "Gauhati Medical"],
+            "correct_option": "Cotton College (University)",
+            "hint": "Located near Dighalipukhuri in Panbazar.",
+            "category": "Career & Identity",
+            "created_by": "Priya Hazarika (Daughter)"
+        },
+        {
+            "id": "quiz-3",
+            "question": "What is Priya's favorite homemade sweet you prepared on Bihu?",
+            "options": ["Narikol Laru (Coconut Sweet)", "Rasgulla", "Kaju Katli", "Sandesh"],
+            "correct_option": "Narikol Laru (Coconut Sweet)",
+            "hint": "Made with freshly grated coconut and fragrant jaggery.",
+            "category": "Family Memories",
+            "created_by": "Priya Hazarika (Daughter)"
+        },
+        {
+            "id": "quiz-4",
+            "question": "What is the color of the front garden gate of your Guwahati residence?",
+            "options": ["Forest Green", "Bright Red", "Sky Blue", "Golden Yellow"],
+            "correct_option": "Forest Green",
+            "hint": "It matches the green color of your tea hedge garden.",
+            "category": "Home Familiarity",
+            "created_by": "Priya Hazarika (Daughter)"
+        }
+    ]
+}
+
 # -----------------------------------------------------------------------------
 # Caregiver & Communication Endpoints
 # -----------------------------------------------------------------------------
+@app.get("/api/caregiver/quiz_questions")
+def get_caregiver_quiz_questions(patient_id: str = "PAT-7401"):
+    return DB_QUIZ_QUESTIONS.get(patient_id, [])
+
+@app.post("/api/caregiver/quiz_questions")
+def add_caregiver_quiz_question(payload: QuizQuestionPayload):
+    q_id = f"quiz-{uuid.uuid4().hex[:6]}"
+    new_question = {
+        "id": q_id,
+        "question": payload.question_text,
+        "options": payload.options,
+        "correct_option": payload.correct_option,
+        "hint": payload.hint or "Think about your family members.",
+        "category": payload.category,
+        "created_by": payload.created_by
+    }
+    if payload.patient_id not in DB_QUIZ_QUESTIONS:
+        DB_QUIZ_QUESTIONS[payload.patient_id] = []
+    DB_QUIZ_QUESTIONS[payload.patient_id].append(new_question)
+    return {"status": "created", "question": new_question}
+
+@app.delete("/api/caregiver/quiz_questions/{question_id}")
+def delete_caregiver_quiz_question(question_id: str, patient_id: str = "PAT-7401"):
+    if patient_id in DB_QUIZ_QUESTIONS:
+        DB_QUIZ_QUESTIONS[patient_id] = [q for q in DB_QUIZ_QUESTIONS[patient_id] if q["id"] != question_id]
+    return {"status": "deleted", "question_id": question_id}
+
 @app.get("/api/caregiver/messages")
 def get_caregiver_messages(patient_id: str = "PAT-7401"):
     return DB_MESSAGES.get(patient_id, [])
