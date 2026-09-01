@@ -70,6 +70,7 @@ class PrescriptionCreatePayload(BaseModel):
     dose: str
     frequency: str = "Once Daily"
     time: str = "08:30 AM"
+    meal_timing: Optional[str] = "After Morning Meal / Tea"
     color: str = "#3b82f6"
     shape: str = "round"
     clinical_rationale: str = "Cognitive enhancement & symptom management"
@@ -226,6 +227,7 @@ DB_PRESCRIPTIONS: Dict[str, List[Dict[str, Any]]] = {
             "dose": "5 mg - 1 Tablet",
             "frequency": "Once Daily (Morning)",
             "time": "08:30 AM",
+            "meal_timing": "After Morning Meal / Tea",
             "color": "#3b82f6",
             "shape": "round",
             "prescribed_by": "Dr. H. Baruah, MD",
@@ -244,6 +246,7 @@ DB_PRESCRIPTIONS: Dict[str, List[Dict[str, Any]]] = {
             "dose": "5 mg - 1 Tablet",
             "frequency": "Once Daily (Afternoon)",
             "time": "01:30 PM",
+            "meal_timing": "After Afternoon Lunch",
             "color": "#f59e0b",
             "shape": "oval",
             "prescribed_by": "Dr. H. Baruah, MD",
@@ -262,6 +265,7 @@ DB_PRESCRIPTIONS: Dict[str, List[Dict[str, Any]]] = {
             "dose": "10 mg - 1 Tablet",
             "frequency": "Once Daily (Evening)",
             "time": "08:00 PM",
+            "meal_timing": "After Evening Dinner / Bedtime",
             "color": "#10b981",
             "shape": "round",
             "prescribed_by": "Dr. H. Baruah, MD",
@@ -310,6 +314,42 @@ DB_MESSAGES: Dict[str, List[Dict[str, Any]]] = {
             "time": "Yesterday, 05:15 PM",
             "message": "Good evening Priya. Excellent proactive response. The 6 PM agitation aligns with mild sundowning. Keep the living room brightly lit from 5:30 PM and ensure he takes the Memantine dose promptly at 8:00 PM.",
             "urgency": "normal"
+        }
+    ],
+    "PAT-7402": [
+        {
+            "id": "msg-201",
+            "sender_role": "caregiver",
+            "sender_name": "Rahul Devi (Son)",
+            "time": "Today, 09:15 AM",
+            "message": "Good morning Dr. Baruah. Maa completed her Cultural Memory Match game with a 92% score today. Her focus in the mornings is very good.",
+            "urgency": "normal"
+        },
+        {
+            "id": "msg-202",
+            "sender_role": "doctor",
+            "sender_name": "Dr. H. Baruah, MD",
+            "time": "Today, 10:00 AM",
+            "message": "Excellent news Rahul. Her MMSE baseline of 25 reflects early MCI stability. Continue the twice-daily cognitive sessions and morning walks.",
+            "urgency": "normal"
+        }
+    ],
+    "PAT-7403": [
+        {
+            "id": "msg-301",
+            "sender_role": "caregiver",
+            "sender_name": "Kabita Phukan (Spouse)",
+            "time": "Yesterday, 07:20 PM",
+            "message": "Doctor, Naren tried to walk out towards the front gate during dusk yesterday. The GPS wander alert alerted us immediately.",
+            "urgency": "urgent"
+        },
+        {
+            "id": "msg-302",
+            "sender_role": "doctor",
+            "sender_name": "Dr. H. Baruah, MD",
+            "time": "Yesterday, 07:45 PM",
+            "message": "Thank you for the urgent update Kabita. We have set the geofence perimeter tighter. Please ensure the safety latch is engaged by 5:00 PM and play the soothing soundscapes.",
+            "urgency": "urgent"
         }
     ]
 }
@@ -501,6 +541,7 @@ def create_prescription(payload: PrescriptionCreatePayload):
         "dose": payload.dose,
         "frequency": payload.frequency,
         "time": payload.time,
+        "meal_timing": payload.meal_timing or "After Morning Meal / Tea",
         "color": payload.color,
         "shape": payload.shape,
         "prescribed_by": "Dr. H. Baruah, MD",

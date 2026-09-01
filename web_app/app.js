@@ -35,6 +35,40 @@ const AppState = {
     }
   },
 
+  patientPersonalNotes: {
+    'PAT-7401': [
+      {
+        id: 'note-p-1',
+        text: 'Met my old Guwahati college friend Arun today at tea stall. Remembered 1972 days!',
+        time: 'Today, 09:30 AM'
+      },
+      {
+        id: 'note-p-2',
+        text: 'Priya brought fresh cardamom tea from garden. Very soothing.',
+        time: 'Yesterday, 08:00 AM'
+      }
+    ]
+  },
+
+  patientPhotoMemories: {
+    'PAT-7401': [
+      {
+        id: 'photo-p-1',
+        personName: 'Friend Arun',
+        caption: 'He is my friend Arun. We met in Guwahati college in 1972 and loved morning tea.',
+        image: 'assets/friend_arun.jpg',
+        date: 'Added Today'
+      },
+      {
+        id: 'photo-p-2',
+        personName: 'Priya Hazarika (Daughter)',
+        caption: 'My beloved daughter Priya who takes care of me every single day with love.',
+        image: 'assets/daughter.jpg',
+        date: 'Added Yesterday'
+      }
+    ]
+  },
+
   patients: {
     'PAT-7401': {
       id: 'PAT-7401',
@@ -53,6 +87,14 @@ const AppState = {
       complianceRate: 94,
       trend: [72, 74, 76, 78],
       radarScores: [80, 70, 85, 90, 75, 78], // Orientation, Recall, Attention, Language, Spatial, Executive
+      cognitiveFingerprints: {
+        memoryRecall: 78,
+        reactionSpeedSec: 1.8,
+        sequenceAbility: 85,
+        faceRecognition: 90,
+        audioRecall: 65,
+        attention: 72
+      },
       gpsStatus: {
         status: 'safe',
         zone: 'Guwahati Home Perimeter (Sector 4)',
@@ -77,6 +119,14 @@ const AppState = {
       complianceRate: 98,
       trend: [80, 82, 83, 84],
       radarScores: [90, 85, 88, 92, 84, 86],
+      cognitiveFingerprints: {
+        memoryRecall: 84,
+        reactionSpeedSec: 1.1,
+        sequenceAbility: 88,
+        faceRecognition: 94,
+        audioRecall: 78,
+        attention: 85
+      },
       gpsStatus: {
         status: 'safe',
         zone: 'Jorhat Tea Estate Residence',
@@ -101,6 +151,14 @@ const AppState = {
       complianceRate: 86,
       trend: [68, 65, 63, 62],
       radarScores: [55, 48, 60, 72, 50, 58],
+      cognitiveFingerprints: {
+        memoryRecall: 58,
+        reactionSpeedSec: 2.6,
+        sequenceAbility: 52,
+        faceRecognition: 60,
+        audioRecall: 48,
+        attention: 54
+      },
       gpsStatus: {
         status: 'wander_alert',
         zone: 'Near Dibrugarh Park (Outside Boundary)',
@@ -629,20 +687,129 @@ function loginAs(role) {
 
   // Render ONLY the authorized portal view
   if (role === 'patient') {
+    stopChatPolling();
     patientView.style.display = 'block';
     renderPatientView();
+    setTimeout(playPatientWelcomeGreeting, 500);
   } else if (role === 'caregiver') {
     caregiverView.style.display = 'block';
     renderCaregiverView();
+    startChatPolling();
   } else if (role === 'doctor') {
     doctorView.style.display = 'block';
     renderDoctorView();
+    startChatPolling();
   }
 
   window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
+function formatISTTime() {
+  return new Date().toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: true
+  });
+}
+
+function formatISTDate(lang = 'en') {
+  const now = new Date();
+  const istDateString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+  const istNow = new Date(istDateString);
+
+  const dayIdx = istNow.getDay();
+  const monthIdx = istNow.getMonth();
+  const dateNum = istNow.getDate();
+  const yearNum = istNow.getFullYear();
+
+  const daysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthsEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const daysAs = ['দেওবাৰ', 'সোমবাৰ', 'মঙ্গলবাৰ', 'বুধবাৰ', 'বৃহস্পতিবাৰ', 'শুক্ৰবাৰ', 'শনিবাৰ'];
+  const monthsAs = ['জানুৱাৰী', 'ফেব্ৰুৱাৰী', 'মাৰ্চ', 'এপ্ৰিল', 'মে', 'জুন', 'জুলাই', 'আগষ্ট', 'ছেপ্টেম্বৰ', 'অক্টোবৰ', 'নৱেম্বৰ', 'ডিচেম্বৰ'];
+
+  const daysBn = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+  const monthsBn = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+
+  const daysHi = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
+  const monthsHi = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+
+  if (lang === 'as') return `${daysAs[dayIdx]}, ${dateNum} ${monthsAs[monthIdx]} ${yearNum} (IST)`;
+  if (lang === 'bn') return `${daysBn[dayIdx]}, ${dateNum} ${monthsBn[monthIdx]} ${yearNum} (IST)`;
+  if (lang === 'hi') return `${daysHi[dayIdx]}, ${dateNum} ${monthsHi[monthIdx]} ${yearNum} (IST)`;
+  return `${daysEn[dayIdx]}, ${monthsEn[monthIdx]} ${dateNum}, ${yearNum} (IST)`;
+}
+
+function playPatientWelcomeGreeting() {
+  const now = new Date();
+  const istDateString = now.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
+  const istNow = new Date(istDateString);
+
+  const hour = istNow.getHours();
+  const lang = AppState.currentLanguage || 'en';
+
+  let timeGreetingEn = 'Good morning';
+  let timeGreetingAs = 'শুভ ৰাতিপুৱা';
+  let timeGreetingBn = 'শুভ সকাল';
+  let timeGreetingHi = 'शुभ प्रभात';
+
+  if (hour >= 12 && hour < 17) {
+    timeGreetingEn = 'Good afternoon';
+    timeGreetingAs = 'শুভ বিয়লি';
+    timeGreetingBn = 'শুভ দুপুর';
+    timeGreetingHi = 'शुभ अपराह्न';
+  } else if (hour >= 17 || hour < 5) {
+    timeGreetingEn = 'Good evening';
+    timeGreetingAs = 'শুভ গধূলি';
+    timeGreetingBn = 'শুভ সন্ধ্যা';
+    timeGreetingHi = 'शुभ संध्या';
+  }
+
+  const daysEn = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const monthsEn = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+
+  const daysAs = ['দেওবাৰ', 'সোমবাৰ', 'মঙ্গলবাৰ', 'বুধবাৰ', 'বৃহস্পতিবাৰ', 'শুক্ৰবাৰ', 'শনিবাৰ'];
+  const monthsAs = ['জানুৱাৰী', 'ফেব্ৰুৱাৰী', 'মাৰ্চ', 'এপ্ৰিল', 'মে', 'জুন', 'জুলাই', 'আগষ্ট', 'ছেপ্টেম্বৰ', 'অক্টোবৰ', 'নৱেম্বৰ', 'ডিচেম্বৰ'];
+
+  const daysBn = ['রবিবার', 'সোমবার', 'মঙ্গলবার', 'বুধবার', 'বৃহস্পতিবার', 'শুক্রবার', 'শনিবার'];
+  const monthsBn = ['জানুয়ারি', 'ফেব্রুয়ারি', 'মার্চ', 'এপ্রিল', 'মে', 'জুন', 'জুলাই', 'আগস্ট', 'সেপ্টেম্বর', 'অক্টোবর', 'নভেম্বর', 'ডিসেম্বর'];
+
+  const daysHi = ['रविवार', 'सोमवार', 'मंगलवार', 'बुधवार', 'गुरुवार', 'शुक्रवार', 'शनिवार'];
+  const monthsHi = ['जनवरी', 'फ़रवरी', 'मार्च', 'अप्रैल', 'मई', 'जून', 'जुलाई', 'अगस्त', 'सितंबर', 'अक्टूबर', 'नवंबर', 'दिसंबर'];
+
+  const dayIdx = istNow.getDay();
+  const monthIdx = istNow.getMonth();
+  const dateNum = istNow.getDate();
+  const yearNum = istNow.getFullYear();
+
+  // Update date & time badges on UI with IST
+  const dateBadge = document.getElementById('patientLiveDate');
+  const timeBadge = document.getElementById('patientLiveTime');
+
+  if (timeBadge) {
+    timeBadge.innerText = `${formatISTTime()} IST`;
+  }
+  if (dateBadge) {
+    dateBadge.innerText = formatISTDate(lang);
+  }
+
+  let greetingText = '';
+  if (lang === 'as') {
+    greetingText = `${timeGreetingAs} বীৰেন দেউতা! আজি ${daysAs[dayIdx]}, ${dateNum} ${monthsAs[monthIdx]}, ${yearNum}। আপোনাৰ দৈনিক সংগীলৈ স্বাগতম।`;
+  } else if (lang === 'bn') {
+    greetingText = `${timeGreetingBn} বীরেনবাবু! আজ ${daysBn[dayIdx]}, ${dateNum} ${monthsBn[monthIdx]}, ${yearNum}। আপনার দৈনন্দিন সংগীতে স্বাগতম।`;
+  } else if (lang === 'hi') {
+    greetingText = `${timeGreetingHi} बीरेन जी! आज ${daysHi[dayIdx]}, ${dateNum} ${monthsHi[monthIdx]} ${yearNum} है। आपकी दैनिक दिनचर्या में आपका स्वागत है।`;
+  } else {
+    greetingText = `${timeGreetingEn}, Biren Babu! Today is ${daysEn[dayIdx]}, ${monthsEn[monthIdx]} ${dateNum}, ${yearNum}. Welcome to your daily care companion routine.`;
+  }
+
+  AudioEngine.speakText(greetingText, lang);
+}
+
 function logout() {
+  stopChatPolling();
   AppState.currentUser = null;
   AudioEngine.playChime('bell');
 
@@ -672,8 +839,14 @@ function logout() {
 // PORTAL 1 RENDER: PATIENT COMPANION (ISOLATED DYNAMIC SCHEDULE SPOTLIGHT)
 // ----------------------------------------------------------------------------
 function renderPatientView() {
+  syncPrescriptionsToSchedule();
   const lang = AppState.currentLanguage;
   const t = i18n[lang] || i18n.en;
+
+  const dateBadge = document.getElementById('patientLiveDate');
+  const timeBadge = document.getElementById('patientLiveTime');
+  if (timeBadge) timeBadge.innerText = `${formatISTTime()} IST`;
+  if (dateBadge) dateBadge.innerText = formatISTDate(lang);
 
   const tasks = AppState.scheduleTasks || [];
   const activeTask = tasks.find(tsk => !tsk.isCompleted);
@@ -730,118 +903,173 @@ function renderPatientView() {
     }
   }
 
+  const completedCount = tasks.filter(t => t.isCompleted).length;
+  const totalCount = tasks.length;
+  const countBadge = document.getElementById('patientScheduleCountBadge');
+  if (countBadge) {
+    countBadge.innerText = `${completedCount} of ${totalCount} Completed`;
+  }
+
   const scheduleContainer = document.getElementById('patientScheduleList');
   if (scheduleContainer) {
     scheduleContainer.innerHTML = tasks.map(tsk => {
       const isCurrent = activeTask && activeTask.id === tsk.id;
+      let itemStyle = 'background: #f8fafc; border: 1px solid #cbd5e1;';
+      let badgeHtml = '<strong style="color:#64748b; font-weight:700;">⏰ Pending</strong>';
+
+      if (tsk.isCompleted) {
+        itemStyle = 'background: #f0fdf4; border: 1.5px solid #86efac; color: #166534;';
+        badgeHtml = '<strong style="color:#166534; font-weight:800;">✓ Completed</strong>';
+      } else if (isCurrent) {
+        itemStyle = 'background: #fefce8; border: 2px solid #eab308; color: #854d0e;';
+        badgeHtml = '<strong style="color:#ca8a04; font-weight:800;">⭐ ACTIVE</strong>';
+      }
+
       return `
-        <div class="schedule-item ${tsk.isCompleted ? 'done' : ''}" style="cursor:pointer; ${isCurrent ? 'border: 2px solid #eab308; background:#fefce8;' : ''}" onclick="toggleScheduleTask('${tsk.id}')">
-          <span>${tsk.icon} ${tsk.time} - ${tsk.title}</span>
-          <strong>${tsk.isCompleted ? '✓ Completed' : (isCurrent ? '⭐ ACTIVE' : '⏰ Pending')}</strong>
+        <div class="schedule-item ${tsk.isCompleted ? 'done' : ''}" style="cursor:pointer; padding:14px 18px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; ${itemStyle}" onclick="toggleScheduleTask('${tsk.id}')">
+          <span style="font-size:15px; font-weight:700;">${tsk.icon} ${tsk.time} - ${tsk.title}</span>
+          <div style="display:flex; align-items:center; gap:10px;">
+            <button class="chip-btn" onclick="event.stopPropagation(); speakActiveTaskPrompt('${tsk.id}')" title="Listen Task Instruction">🔊</button>
+            ${badgeHtml}
+          </div>
         </div>
       `;
     }).join('');
   }
+
+  renderPatientPersonalNotes();
 }
 
-function speakActiveTaskPrompt(taskId) {
-  const task = (AppState.scheduleTasks || []).find(t => t.id === taskId);
-  if (!task) return;
-  const lang = AppState.currentLanguage;
-  const text = task.instructions[lang] || task.instructions.en;
-  AudioEngine.speakText(text, lang);
-}
+// ----------------------------------------------------------------------------
+// PATIENT PERSONAL NOTES & FRIEND PHOTO JOURNAL FUNCTIONS
+// ----------------------------------------------------------------------------
+function renderPatientPersonalNotes() {
+  const patientId = AppState.activePatientId;
+  const notesContainer = document.getElementById('patientNotesList');
+  const photosContainer = document.getElementById('patientPhotoMemoryGrid');
 
-function completeScheduleTask(taskId) {
-  const task = (AppState.scheduleTasks || []).find(t => t.id === taskId);
-  if (task) {
-    task.isCompleted = true;
+  // 1. Render Personal Text Notes
+  if (notesContainer) {
+    const notes = AppState.patientPersonalNotes[patientId] || [];
+    if (notes.length === 0) {
+      notesContainer.innerHTML = `<div style="padding:16px; color:var(--text-muted); font-size:13px; text-align:center;">No personal text notes recorded yet. Write your first note above!</div>`;
+    } else {
+      notesContainer.innerHTML = notes.map(n => `
+        <div class="text-note-card">
+          <div class="text-note-content">
+            <p>"${n.text}"</p>
+            <div class="text-note-time">📅 ${n.time}</div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="chip-btn" onclick="speakPatientNoteText('${n.id}')" title="Listen Voice">🔊</button>
+            <button class="btn-rx-del" onclick="deletePatientTextNote('${n.id}')" title="Delete Note">🗑️</button>
+          </div>
+        </div>
+      `).join('');
+    }
   }
-  AudioEngine.playChime('success');
-  AudioEngine.speakText(`Task completed! Next schedule task loaded.`, AppState.currentLanguage);
 
-  AppState.alerts.unshift({
-    id: `alt-${Date.now()}`,
-    type: 'info',
-    title: 'Schedule Task Completed',
-    detail: `"${task ? task.title : 'Task'}" completed by patient. Telemetry synced.`,
-    time: 'Just now'
-  });
-
-  renderPatientView();
-}
-
-function toggleScheduleTask(taskId) {
-  const task = (AppState.scheduleTasks || []).find(t => t.id === taskId);
-  if (task) {
-    task.isCompleted = !task.isCompleted;
-    AudioEngine.playChime('bell');
-    renderPatientView();
+  // 2. Render Friend & Family Photo Memory Cards
+  if (photosContainer) {
+    const photos = AppState.patientPhotoMemories[patientId] || [];
+    if (photos.length === 0) {
+      photosContainer.innerHTML = `<div style="padding:16px; color:var(--text-muted); font-size:13px; text-align:center;">No friend photos saved yet. Click "Add Friend Photo & Caption" above!</div>`;
+    } else {
+      photosContainer.innerHTML = photos.map(p => `
+        <div class="photo-memory-card">
+          <div class="photo-memory-img-wrap">
+            <img src="${p.image}" alt="${p.personName}">
+            <span class="photo-person-tag">👤 ${p.personName}</span>
+          </div>
+          <div class="photo-memory-body">
+            <p class="photo-caption-text">"${p.caption}"</p>
+            <div class="photo-card-actions">
+              <button class="chip-btn" onclick="speakPatientPhotoCaption('${p.id}')" style="flex:1;">🔊 Listen Voice</button>
+              <button class="btn-rx-del" onclick="deletePatientPhotoMemory('${p.id}')" title="Delete Photo">🗑️</button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+    }
   }
 }
 
-function resetPatientSchedule() {
-  (AppState.scheduleTasks || []).forEach(t => t.isCompleted = false);
-  AudioEngine.playChime('bell');
-  renderPatientView();
-}
+function savePatientTextNote() {
+  const input = document.getElementById('patientNoteText');
+  if (!input || !input.value.trim()) return;
 
-function speakMedicationPrompt(rxId) {
-  const task = (AppState.scheduleTasks || []).find(t => t.id === rxId);
-  if (task) {
-    speakActiveTaskPrompt(task.id);
+  const noteText = input.value.trim();
+  input.value = '';
+
+  const patientId = AppState.activePatientId;
+  if (!AppState.patientPersonalNotes[patientId]) {
+    AppState.patientPersonalNotes[patientId] = [];
   }
-}
 
-function markMedicationTaken(rxId) {
-  completeScheduleTask(rxId);
-}
-
-function markMedicationTaken(rxId) {
-  const patientRxs = AppState.prescriptions[AppState.activePatientId] || [];
-  const med = patientRxs.find(r => r.id === rxId);
-  if (med) {
-    med.takenToday = true;
-  }
-  AudioEngine.playChime('success');
-  AudioEngine.speakText('Medicine taken logged successfully. Good job Biren Babu!', AppState.currentLanguage);
-
-  AppState.alerts.unshift({
-    id: `alt-${Date.now()}`,
-    type: 'info',
-    title: 'Medication Confirmed Taken',
-    detail: `${med ? med.name : 'Morning Pill'} confirmed by patient. Telemetry synced.`,
-    time: 'Just now'
-  });
-
-  renderPatientView();
-}
-
-function simulateVoiceResponse() {
-  AudioEngine.playChime('bell');
-  const lang = AppState.currentLanguage;
-  const greetings = {
-    en: 'Good morning Biren Babu! Today is Monday, 31st August. The weather in Guwahati is pleasant and bright. Priya sends her love!',
-    as: 'নমস্কাৰ বীৰেন বাবু! আজি সোমবাৰ, ৩১ আগষ্ট। গুৱাহাটীৰ বতৰ আজি শান্তিপূৰ্ণ। প্ৰিয়াই আপোনাক মৰম যাচিছে!',
-    bn: 'শুভ সকাল বীরেন বাবু! আজ সোমবার, ৩১ আগস্ট। গুয়াহাটির পরিবেশ খুব সুন্দর। প্রিয়া আপনার জন্য ভালোবাসা পাঠিয়েছে!',
-    hi: 'शुभ प्रभात बीरेन बाबू! आज सोमवार, 31 अगस्त है। गुवाहाटी में मौसम बहुत सुहावना है। प्रिया ने आपको प्रणाम कहा है!'
+  const newNote = {
+    id: `note-p-${Date.now()}`,
+    text: noteText,
+    time: `Today at ${formatISTTime()}`
   };
-  AudioEngine.speakText(greetings[lang] || greetings.en, lang);
+
+  AppState.patientPersonalNotes[patientId].unshift(newNote);
+  AudioEngine.playChime('success');
+  renderPatientPersonalNotes();
+
+  AudioEngine.speakText(`Note saved! ${noteText}`, AppState.currentLanguage);
 }
 
-function triggerSOS() {
+function deletePatientTextNote(noteId) {
+  const patientId = AppState.activePatientId;
+  if (AppState.patientPersonalNotes[patientId]) {
+    AppState.patientPersonalNotes[patientId] = AppState.patientPersonalNotes[patientId].filter(n => n.id !== noteId);
+  }
   AudioEngine.playChime('bell');
-  alert(`🚨 EMERGENCY SOS BEACON DISPATCHED:\n\n• Primary Contact: Priya Hazarika (Daughter) - Call & SMS Dialed\n• Attending Neurologist: Dr. H. Baruah (Guwahati Clinic)\n• Live GPS: Safe within Guwahati Home Sector 4\n• Battery: 88% • Network: Offline SQLite Queue active`);
+  renderPatientPersonalNotes();
 }
 
-// ----------------------------------------------------------------------------
-// PORTAL 2 RENDER: CAREGIVER / FAMILY PORTAL (ISOLATED)
-// ----------------------------------------------------------------------------
-function renderCaregiverView() {
-  const patient = AppState.patients[AppState.activePatientId];
+function speakPatientNoteText(noteId) {
+  const patientId = AppState.activePatientId;
+  const notes = AppState.patientPersonalNotes[patientId] || [];
+  const note = notes.find(n => n.id === noteId);
+  if (note) {
+    AudioEngine.speakText(note.text, AppState.currentLanguage);
+  }
+}
 
-  const cogElem = document.getElementById('caregiverCogIndex');
-  if (cogElem) cogElem.innerText = `${patient.cognitiveIndex}/100`;
+function openPatientPhotoModal() {
+  const modal = document.getElementById('patientPhotoModal');
+  if (modal) modal.style.display = 'flex';
+}
+
+function closePatientPhotoModal() {
+  const modal = document.getElementById('patientPhotoModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function handleSavePatientPhotoMemory(e) {
+  e.preventDefault();
+  const personName = document.getElementById('photoPersonName').value.trim();
+  const caption = document.getElementById('photoCaption').value.trim();
+  const checkedPreset = document.querySelector('input[name="photoPreset"]:checked');
+  const imageUrl = checkedPreset ? checkedPreset.value : 'assets/friend_arun.jpg';
+
+  const patientId = AppState.activePatientId;
+  if (!AppState.patientPhotoMemories[patientId]) {
+    AppState.patientPhotoMemories[patientId] = [];
+  }
+
+  const newPhoto = {
+    id: `photo-p-${Date.now()}`,
+    personName: personName,
+    caption: caption,
+    image: imageUrl,
+    date: `Added Today at ${formatISTTime()}`
+  };
+
+  AppState.patientPhotoMemories[patientId].unshift(newPhoto);
+  closePatientPhotoModal();
+  AudioEngine.playChime('success');
 
   const latElem = document.getElementById('caregiverLatency');
   if (latElem) latElem.innerText = `${(patient.reactionTimeAvg / 1000).toFixed(2)}s`;
@@ -866,6 +1094,135 @@ function renderCaregiverView() {
   renderAlertsList();
 }
 
+// ----------------------------------------------------------------------------
+// UNIVERSAL SYNC & REAL-TIME CHAT FOR CAREGIVER & DOCTOR PORTALS
+// ----------------------------------------------------------------------------
+const API_BASE_URL = 'http://localhost:8000';
+let chatPollInterval = null;
+
+function mapMessageFromApi(m) {
+  return {
+    id: m.id || `msg-${Date.now()}`,
+    senderRole: m.sender_role || m.senderRole || 'caregiver',
+    senderName: m.sender_name || m.senderName || 'Caregiver',
+    time: m.time || 'Just now',
+    message: m.message || ''
+  };
+}
+
+function syncPrescriptionsToSchedule() {
+  const rxs = AppState.prescriptions[AppState.activePatientId] || [];
+  if (!AppState.scheduleTasks) AppState.scheduleTasks = [];
+
+  const activeRxIds = new Set(rxs.map(r => r.id));
+  const activeRxNames = new Set(rxs.map(r => r.name.toLowerCase().trim()));
+
+  // 1. Purge schedule tasks whose prescription was deleted
+  AppState.scheduleTasks = AppState.scheduleTasks.filter(task => {
+    if (task.type !== 'medication') return true;
+    if (task.id.startsWith('task-rx-')) {
+      const rxId = task.id.replace('task-rx-', '');
+      return activeRxIds.has(rxId);
+    }
+    return Array.from(activeRxNames).some(name => task.title.toLowerCase().includes(name));
+  });
+
+  // 2. Ensure active prescriptions exist in schedule
+  rxs.forEach(rx => {
+    const taskId = `task-rx-${rx.id}`;
+    const exists = AppState.scheduleTasks.some(t => t.id === taskId || t.title.toLowerCase().includes(rx.name.toLowerCase().trim()));
+    if (!exists) {
+      const mealTiming = rx.mealTiming || rx.frequency || 'After Morning Meal / Tea';
+      const goalTask = {
+        id: taskId,
+        title: `💊 ${rx.name} ${rx.dose} (${mealTiming})`,
+        time: rx.time || '08:30 AM',
+        icon: '💊',
+        type: 'medication',
+        color: rx.color || '#3b82f6',
+        bg: '#fefce8',
+        isCompleted: rx.takenToday || false,
+        instructions: rx.instructions || {
+          en: `GOAL (${mealTiming.toUpperCase()}): Take 1 tablet of ${rx.name} (${rx.dose}) with water.`,
+          as: 'ৰাতিপুৱাৰ চাহ খোৱাৰ পিছত ১টা টেবলেট পানীৰে সৈতে লওক।',
+          bn: 'সকালের খাবারের পর ১টি ট্যাবলেট জল দিয়ে খান।',
+          hi: 'भोजन के बाद 1 गोली पानी के साथ लें।'
+        }
+      };
+      AppState.scheduleTasks.push(goalTask);
+    }
+  });
+}
+
+async function fetchPrescriptionsFromBackend() {
+  const patientId = AppState.activePatientId;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/doctor/prescriptions?patient_id=${patientId}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data)) {
+        AppState.prescriptions[patientId] = data.map(rx => ({
+          id: rx.id,
+          name: rx.name,
+          dose: rx.dose,
+          frequency: rx.frequency,
+          time: rx.time,
+          mealTiming: rx.meal_timing || rx.frequency || 'After Morning Meal / Tea',
+          color: rx.color || '#3b82f6',
+          shape: rx.shape || 'round',
+          takenToday: false,
+          clinicalRationale: rx.clinical_rationale || '',
+          instructions: rx.instructions || { en: 'Take with water.' }
+        }));
+        syncPrescriptionsToSchedule();
+        const patientView = document.getElementById('patientView');
+        if (patientView && patientView.style.display !== 'none') {
+          renderPatientView();
+        }
+      }
+    }
+  } catch (err) {
+    console.log('Backend prescriptions sync offline:', err);
+  }
+}
+
+async function syncChatMessagesFromBackend() {
+  const patientId = AppState.activePatientId;
+  try {
+    const res = await fetch(`${API_BASE_URL}/api/caregiver/messages?patient_id=${patientId}`);
+    if (res.ok) {
+      const data = await res.json();
+      if (Array.isArray(data) && data.length > 0) {
+        AppState.chatMessages[patientId] = data.map(mapMessageFromApi);
+      }
+    }
+  } catch (err) {
+    // Fallback gracefully to local AppState if backend API is offline
+  }
+  renderAllChats();
+}
+
+function startChatPolling() {
+  stopChatPolling();
+  syncChatMessagesFromBackend();
+  fetchPrescriptionsFromBackend();
+  chatPollInterval = setInterval(() => {
+    syncChatMessagesFromBackend();
+    fetchPrescriptionsFromBackend();
+  }, 3000);
+}
+
+function stopChatPolling() {
+  if (chatPollInterval) {
+    clearInterval(chatPollInterval);
+    chatPollInterval = null;
+  }
+}
+
+function renderAllChats() {
+  renderCaregiverChat();
+  renderDoctorChat();
+}
 function renderCaregiverQuizQuestions() {
   const container = document.getElementById('caregiverQuizList');
   if (!container) return;
@@ -963,12 +1320,38 @@ function renderCaregiverChat() {
   if (!chatContainer) return;
 
   const msgs = AppState.chatMessages[AppState.activePatientId] || [];
-  chatContainer.innerHTML = msgs.map(m => `
-    <div class="chat-bubble ${m.senderRole}">
-      <strong>${m.senderName}</strong>: ${m.message}
-      <div class="chat-meta">${m.time}</div>
-    </div>
-  `).join('');
+  chatContainer.innerHTML = msgs.map(m => {
+    const isCaregiver = m.senderRole === 'caregiver';
+    return `
+      <div class="chat-bubble ${isCaregiver ? 'caregiver' : 'doctor'}">
+        <strong style="display:block; margin-bottom:2px; font-size:12px; opacity:0.9;">
+          ${isCaregiver ? '👨‍👩‍👧 ' : '🩺 '}${m.senderName}
+        </strong>
+        ${m.message}
+        <div class="chat-meta">${m.time}</div>
+      </div>
+    `;
+  }).join('');
+  chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+function renderDoctorChat() {
+  const chatContainer = document.getElementById('doctorChatMessages');
+  if (!chatContainer) return;
+
+  const msgs = AppState.chatMessages[AppState.activePatientId] || [];
+  chatContainer.innerHTML = msgs.map(m => {
+    const isDoctor = m.senderRole === 'doctor';
+    return `
+      <div class="chat-bubble ${isDoctor ? 'doctor-me' : 'caregiver-them'}">
+        <strong style="display:block; margin-bottom:2px; font-size:12px; opacity:0.9;">
+          ${isDoctor ? '🩺 ' : '👨‍👩‍👧 '}${m.senderName}
+        </strong>
+        ${m.message}
+        <div class="chat-meta">${m.time}</div>
+      </div>
+    `;
+  }).join('');
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
@@ -980,7 +1363,15 @@ function prefillChat(text) {
   }
 }
 
-function sendCaregiverMessage() {
+function prefillDoctorChat(text) {
+  const input = document.getElementById('doctorChatInput');
+  if (input) {
+    input.value = text;
+    input.focus();
+  }
+}
+
+async function sendCaregiverMessage() {
   const input = document.getElementById('caregiverChatInput');
   if (!input || !input.value.trim()) return;
 
@@ -999,21 +1390,65 @@ function sendCaregiverMessage() {
     AppState.chatMessages[AppState.activePatientId] = [];
   }
   AppState.chatMessages[AppState.activePatientId].push(newMsg);
-  renderCaregiverChat();
+  renderAllChats();
   AudioEngine.playChime('bell');
 
-  setTimeout(() => {
-    const doctorReply = {
-      id: `msg-doc-${Date.now()}`,
-      senderRole: 'doctor',
-      senderName: 'Dr. H. Baruah, MD',
-      time: 'Just now',
-      message: `Received, Priya. I have reviewed Baba's latest 30-day cognitive telemetry (MMSE 22/30, Latency 1.42s). Continue the morning Donepezil regimen and let me know if his evening agitation recurs.`
-    };
-    AppState.chatMessages[AppState.activePatientId].push(doctorReply);
-    renderCaregiverChat();
-    AudioEngine.playChime('success');
-  }, 1500);
+  try {
+    await fetch(`${API_BASE_URL}/api/caregiver/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_id: AppState.activePatientId,
+        sender_role: 'caregiver',
+        sender_name: 'Priya Hazarika (Daughter)',
+        message: msgText,
+        urgency: 'normal'
+      })
+    });
+    syncChatMessagesFromBackend();
+  } catch (err) {
+    console.log('Backend sync offline:', err);
+  }
+}
+
+async function sendDoctorMessage() {
+  const input = document.getElementById('doctorChatInput');
+  if (!input || !input.value.trim()) return;
+
+  const msgText = input.value.trim();
+  input.value = '';
+
+  const newMsg = {
+    id: `msg-doc-${Date.now()}`,
+    senderRole: 'doctor',
+    senderName: 'Dr. H. Baruah, MD',
+    time: 'Just now',
+    message: msgText
+  };
+
+  if (!AppState.chatMessages[AppState.activePatientId]) {
+    AppState.chatMessages[AppState.activePatientId] = [];
+  }
+  AppState.chatMessages[AppState.activePatientId].push(newMsg);
+  renderAllChats();
+  AudioEngine.playChime('success');
+
+  try {
+    await fetch(`${API_BASE_URL}/api/caregiver/messages`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_id: AppState.activePatientId,
+        sender_role: 'doctor',
+        sender_name: 'Dr. H. Baruah, MD',
+        message: msgText,
+        urgency: 'normal'
+      })
+    });
+    syncChatMessagesFromBackend();
+  } catch (err) {
+    console.log('Backend sync offline:', err);
+  }
 }
 
 function playVaultAudio(itemId) {
@@ -1069,11 +1504,54 @@ function renderDoctorView() {
 
   renderDoctorPrescriptionsTable();
   renderDoctorClinicalNotes();
+  renderDoctorChat();
+  renderDoctorCognitiveFingerprints();
   initDoctorCharts();
+}
+
+function renderDoctorCognitiveFingerprints() {
+  const patient = AppState.patients[AppState.activePatientId];
+  if (!patient || !patient.cognitiveFingerprints) return;
+
+  const fp = patient.cognitiveFingerprints;
+
+  const memElem = document.getElementById('fpMemory');
+  const memBar = document.getElementById('fpMemoryBar');
+  if (memElem) memElem.innerText = `${fp.memoryRecall}%`;
+  if (memBar) memBar.style.width = `${fp.memoryRecall}%`;
+
+  const speedElem = document.getElementById('fpSpeed');
+  const speedBar = document.getElementById('fpSpeedBar');
+  if (speedElem) speedElem.innerText = `${fp.reactionSpeedSec}s`;
+  if (speedBar) {
+    const speedPct = Math.min(100, Math.max(10, Math.round(100 - (fp.reactionSpeedSec - 0.8) * 30)));
+    speedBar.style.width = `${speedPct}%`;
+  }
+
+  const seqElem = document.getElementById('fpSeq');
+  const seqBar = document.getElementById('fpSeqBar');
+  if (seqElem) seqElem.innerText = `${fp.sequenceAbility}%`;
+  if (seqBar) seqBar.style.width = `${fp.sequenceAbility}%`;
+
+  const faceElem = document.getElementById('fpFace');
+  const faceBar = document.getElementById('fpFaceBar');
+  if (faceElem) faceElem.innerText = `${fp.faceRecognition}%`;
+  if (faceBar) faceBar.style.width = `${fp.faceRecognition}%`;
+
+  const audioElem = document.getElementById('fpAudio');
+  const audioBar = document.getElementById('fpAudioBar');
+  if (audioElem) audioElem.innerText = `${fp.audioRecall}%`;
+  if (audioBar) audioBar.style.width = `${fp.audioRecall}%`;
+
+  const attElem = document.getElementById('fpAttention');
+  const attBar = document.getElementById('fpAttentionBar');
+  if (attElem) attElem.innerText = `${fp.attention}%`;
+  if (attBar) attBar.style.width = `${fp.attention}%`;
 }
 
 function onDoctorSelectPatient(patientId) {
   AppState.activePatientId = patientId;
+  syncChatMessagesFromBackend();
   renderDoctorView();
 }
 
@@ -1115,13 +1593,36 @@ function renderDoctorPrescriptionsTable() {
   `).join('');
 }
 
-function deleteDoctorPrescription(rxId) {
+async function deleteDoctorPrescription(rxId) {
   if (!confirm('Are you sure you want to discontinue this prescription?')) return;
-  if (AppState.prescriptions[AppState.activePatientId]) {
-    AppState.prescriptions[AppState.activePatientId] = AppState.prescriptions[AppState.activePatientId].filter(r => r.id !== rxId);
+
+  const patientId = AppState.activePatientId;
+  const deletedRx = (AppState.prescriptions[patientId] || []).find(r => r.id === rxId);
+
+  // 1. Remove from local AppState.prescriptions
+  if (AppState.prescriptions[patientId]) {
+    AppState.prescriptions[patientId] = AppState.prescriptions[patientId].filter(r => r.id !== rxId);
   }
+
+  // 2. Purge from AppState.scheduleTasks
+  if (deletedRx && AppState.scheduleTasks) {
+    AppState.scheduleTasks = AppState.scheduleTasks.filter(t => !t.id.includes(rxId) && !t.title.toLowerCase().includes(deletedRx.name.toLowerCase().trim()));
+  }
+
+  // 3. Sync & re-render UI immediately
+  syncPrescriptionsToSchedule();
   renderDoctorPrescriptionsTable();
   renderPatientView();
+  AudioEngine.playChime('bell');
+
+  // 4. Send DELETE request to FastAPI Backend API & wait for backend persistence
+  try {
+    await fetch(`${API_BASE_URL}/api/doctor/prescriptions/${rxId}?patient_id=${patientId}`, {
+      method: 'DELETE'
+    });
+  } catch (e) {
+    console.log('Backend delete API offline:', e);
+  }
 }
 
 function renderDoctorClinicalNotes() {
@@ -1186,21 +1687,33 @@ function initDoctorCharts() {
 
   if (radarCtx && typeof Chart !== 'undefined') {
     if (doctorMmseRadarChart) doctorMmseRadarChart.destroy();
+    const fp = patient.cognitiveFingerprints || {
+      memoryRecall: 78,
+      reactionSpeedSec: 1.8,
+      sequenceAbility: 85,
+      faceRecognition: 90,
+      audioRecall: 65,
+      attention: 72
+    };
+
+    const speedScore = Math.min(100, Math.max(20, Math.round(100 - (fp.reactionSpeedSec - 0.8) * 30)));
+
     doctorMmseRadarChart = new Chart(radarCtx, {
       type: 'radar',
       data: {
-        labels: ['Orientation', 'Recall', 'Attention', 'Language', 'Spatial', 'Executive'],
+        labels: ['🧠 Memory Recall', '⚡ Reaction Speed', '🔢 Sequence Ability', '👨‍👩‍👧 Face Recognition', '🔊 Audio Recall', '🎯 Attention'],
         datasets: [
           {
-            label: `${patient.name} (MMSE Profile)`,
-            data: patient.radarScores,
-            backgroundColor: 'rgba(37, 99, 235, 0.25)',
-            borderColor: '#2563eb',
-            pointBackgroundColor: '#2563eb'
+            label: `${patient.name} (AI Cognitive Fingerprint)`,
+            data: [fp.memoryRecall, speedScore, fp.sequenceAbility, fp.faceRecognition, fp.audioRecall, fp.attention],
+            backgroundColor: 'rgba(139, 92, 246, 0.25)',
+            borderColor: '#8b5cf6',
+            pointBackgroundColor: '#8b5cf6',
+            pointRadius: 5
           },
           {
-            label: 'Age-Matched Clinical Norm',
-            data: [90, 85, 90, 95, 90, 88],
+            label: 'Healthy Age-Matched Clinical Norm',
+            data: [85, 88, 90, 95, 85, 90],
             borderColor: '#94a3b8',
             borderDash: [4, 4],
             backgroundColor: 'transparent',
@@ -1244,12 +1757,14 @@ function autoFillDrugRationale(drugName) {
   }
 }
 
-function handleSavePrescription(e) {
+async function handleSavePrescription(e) {
   e.preventDefault();
   const drugName = document.getElementById('rxDrugName').value;
   const dose = document.getElementById('rxDose').value;
   const freq = document.getElementById('rxFrequency').value;
   const time = document.getElementById('rxTime').value;
+  const mealTimingElem = document.getElementById('rxMealTiming');
+  const mealTiming = mealTimingElem ? mealTimingElem.value : 'After Morning Meal / Tea';
   const rationale = document.getElementById('rxRationale').value;
   const instEn = document.getElementById('rxInstructionsEn').value;
   const instAs = document.getElementById('rxInstructionsAs').value;
@@ -1260,6 +1775,7 @@ function handleSavePrescription(e) {
     dose: dose,
     frequency: freq,
     time: time,
+    mealTiming: mealTiming,
     color: '#3b82f6',
     shape: 'round',
     takenToday: false,
@@ -1277,9 +1793,53 @@ function handleSavePrescription(e) {
   }
   AppState.prescriptions[AppState.activePatientId].push(newRx);
 
+  // Automatically create & register active patient goal / schedule task
+  const goalTask = {
+    id: `task-rx-${Date.now()}`,
+    title: `💊 ${drugName} ${dose} (${mealTiming})`,
+    time: time,
+    icon: '💊',
+    type: 'medication',
+    color: '#3b82f6',
+    bg: '#fefce8',
+    isCompleted: false,
+    instructions: {
+      en: `GOAL (${mealTiming.toUpperCase()}): Take 1 tablet of ${drugName} (${dose}). ${instEn}`,
+      as: instAs || instEn,
+      bn: instEn,
+      hi: instEn
+    }
+  };
+
+  if (!AppState.scheduleTasks) AppState.scheduleTasks = [];
+  AppState.scheduleTasks.push(goalTask);
+
+  // Sync with FastAPI backend
+  try {
+    await fetch(`${API_BASE_URL}/api/doctor/prescriptions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_id: AppState.activePatientId,
+        name: drugName,
+        dose: dose,
+        frequency: freq,
+        time: time,
+        meal_timing: mealTiming,
+        color: '#3b82f6',
+        shape: 'round',
+        clinical_rationale: rationale,
+        instructions_en: instEn,
+        instructions_as: instAs
+      })
+    });
+  } catch (err) {
+    console.log('Backend sync offline:', err);
+  }
+
   closePrescriptionModal();
   AudioEngine.playChime('success');
-  alert(`Prescription for ${drugName} saved and synchronized!`);
+  alert(`Prescription for ${drugName} (${mealTiming}) saved! Reflected on Patient App as an active goal.`);
 
   renderDoctorPrescriptionsTable();
   renderPatientView();
@@ -1500,6 +2060,19 @@ function startFaceRecallGame() {
 
 function checkFaceAnswer(isCorrect, startTime, buttonElem) {
   const latency = Date.now() - startTime;
+  const latencySec = parseFloat((latency / 1000).toFixed(1));
+  const patient = AppState.patients[AppState.activePatientId];
+  if (patient && patient.cognitiveFingerprints) {
+    if (latencySec >= 0.5 && latencySec <= 8.0) {
+      patient.cognitiveFingerprints.reactionSpeedSec = latencySec;
+    }
+    if (isCorrect) {
+      patient.cognitiveFingerprints.faceRecognition = Math.min(100, patient.cognitiveFingerprints.faceRecognition + 1);
+      patient.cognitiveFingerprints.attention = Math.min(100, patient.cognitiveFingerprints.attention + 1);
+    }
+    renderDoctorCognitiveFingerprints();
+  }
+
   if (isCorrect) {
     buttonElem.classList.add('correct');
     AudioEngine.playChime('success');
@@ -1556,6 +2129,12 @@ function pickSeqStep(btn, stepNum, title) {
     if (window.seqStepCurrent > 4) {
       AudioEngine.playChime('success');
       document.getElementById('seqResultBox').innerText = '🎉 Wonderful! Daily routine sequence arranged perfectly!';
+      const patient = AppState.patients[AppState.activePatientId];
+      if (patient && patient.cognitiveFingerprints) {
+        patient.cognitiveFingerprints.sequenceAbility = Math.min(100, patient.cognitiveFingerprints.sequenceAbility + 1);
+        patient.cognitiveFingerprints.attention = Math.min(100, patient.cognitiveFingerprints.attention + 1);
+        renderDoctorCognitiveFingerprints();
+      }
       setTimeout(() => closeGameModal(), 1800);
     }
   } else {
@@ -1602,6 +2181,11 @@ function flipCulturalCard(card) {
       c2.classList.add('matched');
       AudioEngine.playChime('success');
       window.flippedCards = [];
+      const patient = AppState.patients[AppState.activePatientId];
+      if (patient && patient.cognitiveFingerprints) {
+        patient.cognitiveFingerprints.memoryRecall = Math.min(100, patient.cognitiveFingerprints.memoryRecall + 1);
+        renderDoctorCognitiveFingerprints();
+      }
     } else {
       setTimeout(() => {
         c1.querySelector('.card-sym').style.visibility = 'hidden';
@@ -1683,6 +2267,11 @@ function checkFamilyQuizAnswer(selectedOpt, correctOpt, hint, startTime, btn) {
     window.familyQuizState.score++;
     AudioEngine.playChime('success');
     AudioEngine.speakText('Wonderful! That is correct!', AppState.currentLanguage);
+    const patient = AppState.patients[AppState.activePatientId];
+    if (patient && patient.cognitiveFingerprints) {
+      patient.cognitiveFingerprints.audioRecall = Math.min(100, patient.cognitiveFingerprints.audioRecall + 1);
+      renderDoctorCognitiveFingerprints();
+    }
 
     AppState.alerts.unshift({
       id: `alt-${Date.now()}`,
@@ -1784,19 +2373,245 @@ function changeLanguage(lang) {
   }
 }
 
+function speakFullDailySchedule() {
+  const lang = AppState.currentLanguage || 'en';
+  const tasks = AppState.scheduleTasks || [];
+
+  if (tasks.length === 0) {
+    AudioEngine.speakText("Namaskar Biren Babu! You have no schedule tasks for today.", lang);
+    return;
+  }
+
+  let intro = "";
+  if (lang === "as") {
+    intro = "নমস্কাৰ বীৰেন দেউতা! মই আপোনাৰ স্মৃতি ভয়েচ সহায়ক। আজিৰ আপোনাৰ সম্পূৰ্ণ সময়সূচী হ’ল: ";
+  } else if (lang === "bn") {
+    intro = "নমস্কার বীরেনবাবু! আমি আপনার স্মৃতি ভয়েস সহকারী। আজকের আপনার পুরো সময়সূচী হলো: ";
+  } else if (lang === "hi") {
+    intro = "नमस्ते बीरेन जी! मैं आपकी स्मृति वॉइस सहायक हूँ। आज की आपकी पूरी दिनचर्या इस प्रकार है: ";
+  } else {
+    intro = "Namaskar Biren Babu! I am your Smriti Voice Assistant. Here is your complete daily schedule for today: ";
+  }
+
+  const itemsText = tasks.map(t => {
+    const title = t.title.replace('💊', '').replace('🌅', '').replace('🌳', '').replace('🍲', '').replace('🧠', '').replace('🛌', '').trim();
+    const status = t.isCompleted ? (lang === 'as' ? 'সম্পূৰ্ণ হ’ল' : lang === 'bn' ? 'সম্পন্ন' : lang === 'hi' ? 'पूरा हुआ' : 'completed') : (lang === 'as' ? 'বাকী আছে' : lang === 'bn' ? 'বাকি' : lang === 'hi' ? 'बाकी है' : 'pending');
+    return `${t.time}: ${title} (${status})`;
+  }).join(', ');
+
+  const fullSpeech = `${intro} ${itemsText}. Have a wonderful and peaceful day!`;
+
+  AudioEngine.speakText(fullSpeech, lang);
+}
+
 function toggleVoiceAssistant() {
-  const fab = document.getElementById('voiceFab');
+  openSmritiChatModal();
+}
+
+// ----------------------------------------------------------------------------
+// SMRITI AI VOICE & CHATBOT COMPANION ENGINE
+// ----------------------------------------------------------------------------
+function openSmritiChatModal() {
+  const modal = document.getElementById('smritiChatModal');
+  if (modal) modal.style.display = 'flex';
+  AudioEngine.playChime('bell');
+
+  const lang = AppState.currentLanguage || 'en';
+  let helloText = "Hello Biren Babu! Namaskar! 🤖 I am Smriti, your AI Companion. How can I help you today?";
+  if (lang === 'as') {
+    helloText = "নমস্কাৰ বীৰেন দেউতা! 🤖 মই আপোনাৰ স্মৃতি সহায়ক। মই আপোনাক কেনেকৈ সহায় কৰিব পাৰোঁ?";
+  } else if (lang === 'bn') {
+    helloText = "নমস্কার বীরেনবাবু! 🤖 আমি আপনার স্মৃতি সহকারী। আমি আপনাকে কীভাবে সাহায্য করতে পারি?";
+  } else if (lang === 'hi') {
+    helloText = "नमस्ते बीरेन जी! 🤖 मैं आपकी स्मृति सहायक हूँ। मैं आपकी क्या मदद कर सकती हूँ?";
+  }
+
+  const thread = document.getElementById('smritiChatThread');
+  if (thread) {
+    if (thread.children.length === 0) {
+      appendSmritiBotMessage(helloText);
+    } else {
+      AudioEngine.speakText(helloText.replace('🤖', ''), lang);
+    }
+  }
+}
+
+function closeSmritiChatModal() {
+  const modal = document.getElementById('smritiChatModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function appendSmritiUserMessage(text) {
+  const thread = document.getElementById('smritiChatThread');
+  if (!thread) return;
+  const msg = document.createElement('div');
+  msg.className = 'smriti-msg-bubble user';
+  msg.innerText = text;
+  thread.appendChild(msg);
+  thread.scrollTop = thread.scrollHeight;
+}
+
+function appendSmritiBotMessage(text, speak = true) {
+  const thread = document.getElementById('smritiChatThread');
+  if (!thread) return;
+  const msg = document.createElement('div');
+  msg.className = 'smriti-msg-bubble bot';
+  msg.innerText = text;
+  thread.appendChild(msg);
+  thread.scrollTop = thread.scrollHeight;
+
+  if (speak) {
+    AudioEngine.speakText(text, AppState.currentLanguage);
+  }
+}
+
+function sendSmritiQuickMsg(queryText) {
+  appendSmritiUserMessage(queryText);
+  handleSmritiChatQuery(queryText);
+}
+
+function sendSmritiChatMessage() {
+  const input = document.getElementById('smritiChatInput');
+  if (!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+  appendSmritiUserMessage(text);
+  handleSmritiChatQuery(text);
+}
+
+function toggleSmritiVoiceInput() {
+  const micBtn = document.getElementById('smritiMicInputBtn');
+  if (!micBtn) return;
+
   AppState.isListening = !AppState.isListening;
-  fab.classList.toggle('listening', AppState.isListening);
+  micBtn.classList.toggle('listening', AppState.isListening);
 
   if (AppState.isListening) {
     AudioEngine.playChime('bell');
-    AudioEngine.speakText('Namaskar Biren Babu! Smriti is listening. How can I help you today?', AppState.currentLanguage);
-    setTimeout(() => {
-      AppState.isListening = false;
-      fab.classList.remove('listening');
-    }, 4000);
+    AudioEngine.speakText("Smriti is listening to your voice now, Biren Babu. Please speak...", AppState.currentLanguage);
+
+    if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      const recognition = new SpeechRecognition();
+      recognition.lang = AppState.currentLanguage === 'hi' ? 'hi-IN' : (AppState.currentLanguage === 'bn' ? 'bn-IN' : 'en-US');
+      recognition.interimResults = false;
+
+      recognition.onresult = (event) => {
+        const transcript = event.results[0][0].transcript;
+        micBtn.classList.remove('listening');
+        AppState.isListening = false;
+        appendSmritiUserMessage(transcript);
+        handleSmritiChatQuery(transcript);
+      };
+
+      recognition.onerror = () => {
+        micBtn.classList.remove('listening');
+        AppState.isListening = false;
+        const fallbackQuery = "What is my daily schedule?";
+        appendSmritiUserMessage(fallbackQuery);
+        handleSmritiChatQuery(fallbackQuery);
+      };
+
+      recognition.start();
+    } else {
+      setTimeout(() => {
+        micBtn.classList.remove('listening');
+        AppState.isListening = false;
+        const fallbackQuery = "Tell me my daily schedule";
+        appendSmritiUserMessage(fallbackQuery);
+        handleSmritiChatQuery(fallbackQuery);
+      }, 3500);
+    }
   }
+}
+
+function handleSmritiChatQuery(queryText) {
+  const q = queryText.toLowerCase();
+
+  setTimeout(() => {
+    if (q.includes('schedule') || q.includes('routine') || q.includes('today') || q.includes('time')) {
+      const tasks = AppState.scheduleTasks || [];
+      const pending = tasks.filter(t => !t.isCompleted);
+      if (pending.length === 0) {
+        appendSmritiBotMessage("Wonderful news Biren Babu! You have completed all your scheduled activities for today! 🎉");
+      } else {
+        const next = pending[0];
+        appendSmritiBotMessage(`Biren Babu, your next active task is at ${next.time}: ${next.title}. Tap 'Daily Schedule' to view your full 6-step routine!`);
+      }
+    } else if (q.includes('medicine') || q.includes('tablet') || q.includes('pill') || q.includes('dose')) {
+      appendSmritiBotMessage(`Dr. Baruah has prescribed Donepezil 5mg in the morning, Amlodipine 5mg in the afternoon, and Memantine 10mg at bedtime. Priya has ensured all doses are ready for you!`);
+    } else if (q.includes('arun') || q.includes('friend') || q.includes('photo')) {
+      appendSmritiBotMessage(`Arun is your close friend from Guwahati college (1972). You met him at the tea stall and shared wonderful college memories!`);
+    } else if (q.includes('anxious') || q.includes('scared') || q.includes('help') || q.includes('worry') || q.includes('fear')) {
+      appendSmritiBotMessage(`Take a deep breath, Biren Babu. You are safe at home in Guwahati. Your daughter Priya is right here, and Dr. Baruah is monitoring your health. Would you like to try guided tea garden breathing?`);
+    } else if (q.includes('hello') || q.includes('hi') || q.includes('namaskar')) {
+      appendSmritiBotMessage(`Namaskar Biren Babu! I am so happy to talk with you. How are you feeling right now?`);
+    } else {
+      appendSmritiBotMessage(`Thank you for talking with me, Biren Babu! I am always here to assist you with your schedule, medicines, and memories.`);
+    }
+  }, 600);
+}
+
+function openPatientScheduleModal() {
+  const modal = document.getElementById('patientScheduleModal');
+  renderModalScheduleList();
+  if (modal) modal.style.display = 'flex';
+  AudioEngine.playChime('bell');
+}
+
+function closePatientScheduleModal() {
+  const modal = document.getElementById('patientScheduleModal');
+  if (modal) modal.style.display = 'none';
+}
+
+function renderModalScheduleList() {
+  const container = document.getElementById('modalScheduleList');
+  if (!container) return;
+
+  const tasks = AppState.scheduleTasks || [];
+  const activeTask = tasks.find(tsk => !tsk.isCompleted);
+  const completedCount = tasks.filter(t => t.isCompleted).length;
+  const totalCount = tasks.length;
+
+  const modalBadge = document.getElementById('modalScheduleCountBadge');
+  if (modalBadge) {
+    modalBadge.innerText = `${completedCount} of ${totalCount} Completed`;
+  }
+
+  if (tasks.length === 0) {
+    container.innerHTML = `<div style="padding:20px; text-align:center; color:var(--text-muted);">No daily routine tasks recorded yet.</div>`;
+    return;
+  }
+
+  container.innerHTML = tasks.map(tsk => {
+    const isCurrent = activeTask && activeTask.id === tsk.id;
+    let itemStyle = 'background: #f8fafc; border: 1px solid #cbd5e1;';
+    let badgeHtml = '<strong style="color:#64748b; font-weight:700;">⏰ Pending</strong>';
+
+    if (tsk.isCompleted) {
+      itemStyle = 'background: #f0fdf4; border: 1.5px solid #86efac; color: #166534;';
+      badgeHtml = '<strong style="color:#166534; font-weight:800;">✓ Completed</strong>';
+    } else if (isCurrent) {
+      itemStyle = 'background: #fefce8; border: 2px solid #eab308; color: #854d0e;';
+      badgeHtml = '<strong style="color:#ca8a04; font-weight:800;">⭐ ACTIVE</strong>';
+    }
+
+    return `
+      <div class="modal-schedule-item ${tsk.isCompleted ? 'done' : ''}" style="cursor:pointer; padding:14px 18px; border-radius:12px; margin-bottom:10px; display:flex; align-items:center; justify-content:space-between; ${itemStyle}" onclick="toggleScheduleTask('${tsk.id}'); renderModalScheduleList();">
+        <div style="display:flex; align-items:center; gap:14px; flex:1;">
+          <span style="font-size:24px;">${tsk.icon}</span>
+          <div>
+            <strong style="font-size:15px;">${tsk.time} - ${tsk.title}</strong>
+            <div style="font-size:12px; opacity:0.85; margin-top:2px;">${tsk.instructions ? (tsk.instructions[AppState.currentLanguage] || tsk.instructions.en) : ''}</div>
+          </div>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px;">
+          <button class="chip-btn" onclick="event.stopPropagation(); speakActiveTaskPrompt('${tsk.id}')" title="Listen Instruction">🔊</button>
+          ${badgeHtml}
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 // DOM Initialization

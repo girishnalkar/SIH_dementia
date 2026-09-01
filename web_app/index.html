@@ -168,9 +168,9 @@
           </div>
         </div>
 
-        <button class="voice-greet-btn" onclick="simulateVoiceResponse()" id="btnVoiceGreeting">
+        <button class="voice-greet-btn" onclick="playPatientWelcomeGreeting()" id="btnVoiceGreeting">
           <span>🔊</span>
-          <span data-i18n="voiceGreet">Listen to Daily Greeting</span>
+          <span data-i18n="voiceGreet">Listen to Today's Welcome Greeting</span>
         </button>
       </div>
 
@@ -181,6 +181,14 @@
 
       <!-- Sensory & Emergency Quick Hub -->
       <div class="sensory-hub-grid">
+        <div class="hub-card schedule-mode" onclick="openPatientScheduleModal()" id="btnPatientScheduleQuick">
+          <div class="hub-icon-wrap" style="background:#dbeafe; color:#1d4ed8;">📋</div>
+          <div>
+            <h3>Daily Routine & Voice Schedule</h3>
+            <p>Tap to view your 6 daily activities & listen via 🎙️ voice assistant.</p>
+          </div>
+        </div>
+
         <div class="hub-card calm-mode" onclick="openCalmReminiscenceModal()" id="btnPatientCalm">
           <div class="hub-icon-wrap" style="background:#fef08a; color:#854d0e;">🌅</div>
           <div>
@@ -281,14 +289,48 @@
         </div>
       </div>
 
-      <!-- Today's Routine Schedule Card -->
-      <div class="patient-schedule-card">
-        <div class="schedule-header">
-          <h3>📋 Biren Babu's Daily Schedule</h3>
-          <span class="schedule-tag">4 of 6 Completed</span>
+      <!-- Personal Memory Notes & Friend Photo Journal Section -->
+      <div class="patient-notes-section">
+        <div class="notes-header-flex">
+          <div>
+            <h3>📝 My Personal Notes & Friend Memories ("Aamar Smriti & Note")</h3>
+            <p class="section-sub-text">Save your personal thoughts, daily reminders, and photos of friends & family with voice read-outs.</p>
+          </div>
+          <button class="btn-add-memory-photo" onclick="openPatientPhotoModal()">
+            <span>📸</span> Add Friend Photo & Caption
+          </button>
         </div>
-        <div class="schedule-list" id="patientScheduleList">
-          <!-- Injected via JS -->
+
+        <!-- Quick Text Note Creator -->
+        <div class="patient-note-input-card">
+          <label for="patientNoteText"><strong>✍️ Write a Quick Personal Note or Memory:</strong></label>
+          <div class="note-input-row">
+            <input type="text" id="patientNoteText" placeholder="Type a note, e.g. 'Met my old Guwahati college friend Arun today...'" onkeydown="if(event.key==='Enter') savePatientTextNote()" />
+            <button class="btn-save-note" onclick="savePatientTextNote()">
+              <span>💾</span> Save Note
+            </button>
+          </div>
+        </div>
+
+        <!-- Two Columns Grid: Personal Text Notes & Friend Photo Journal -->
+        <div class="patient-notes-grid">
+          
+          <!-- Column 1: Saved Personal Notes -->
+          <div class="patient-notes-col">
+            <div class="col-header-badge">📌 Saved Personal Notes</div>
+            <div class="notes-list-box" id="patientNotesList">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
+          <!-- Column 2: Friends & Loved Ones Photo Memory Cards -->
+          <div class="patient-notes-col">
+            <div class="col-header-badge" style="background:#fef3c7; color:#b45309;">👨‍👩‍👦 Friend & Family Photo Journal</div>
+            <div class="photo-memory-grid" id="patientPhotoMemoryGrid">
+              <!-- Rendered via JS -->
+            </div>
+          </div>
+
         </div>
       </div>
 
@@ -373,7 +415,10 @@
         <!-- Direct Doctor Communication Desk -->
         <div class="dashboard-card chat-card">
           <div class="card-head-flex">
-            <h3>💬 Direct Clinical Chat with Dr. H. Baruah</h3>
+            <div>
+              <h3>💬 Direct Clinical Chat with Dr. H. Baruah</h3>
+              <p class="card-subtitle">Encrypted doctor consultation & prescription guidance</p>
+            </div>
             <span class="doctor-badge-online">● Neurologist Available</span>
           </div>
           <div class="chat-thread-container" id="caregiverChatMessages">
@@ -386,7 +431,7 @@
               <button class="chip-btn" onclick="prefillChat('When should we come for our next in-clinic follow-up?')">Next Visit?</button>
             </div>
             <div class="chat-form-row">
-              <input type="text" id="caregiverChatInput" placeholder="Type a message or clinical question for Dr. Baruah..." />
+              <input type="text" id="caregiverChatInput" placeholder="Type a message or clinical question for Dr. Baruah..." onkeydown="if(event.key==='Enter') sendCaregiverMessage()" />
               <button class="btn-send-msg" onclick="sendCaregiverMessage()">Send ✉️</button>
             </div>
           </div>
@@ -511,7 +556,74 @@
         </div>
       </div>
 
-      <!-- Charts Grid: 30-Day Trajectory & MMSE Radar -->
+      <!-- AI Cognitive Fingerprints Telemetry Panel -->
+      <div class="fingerprints-card-panel">
+        <div class="card-head-flex">
+          <div>
+            <h3>🧬 AI Cognitive Fingerprints (Real-Time Gameplay Telemetry)</h3>
+            <p class="card-subtitle">Empirical cognitive profile computed from patient's interactions with games & reaction speed</p>
+          </div>
+          <span class="fingerprint-badge-live">● Live Game Telemetry Active</span>
+        </div>
+
+        <div class="fingerprints-grid">
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">🧠</span>
+              <span class="fp-label">Memory Recall</span>
+            </div>
+            <div class="fp-value" id="fpMemory">78%</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpMemoryBar" style="width:78%; background:#8b5cf6;"></div></div>
+          </div>
+
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">⚡</span>
+              <span class="fp-label">Reaction Speed</span>
+            </div>
+            <div class="fp-value" id="fpSpeed">1.8s</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpSpeedBar" style="width:72%; background:#2563eb;"></div></div>
+          </div>
+
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">🔢</span>
+              <span class="fp-label">Sequence Ability</span>
+            </div>
+            <div class="fp-value" id="fpSeq">85%</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpSeqBar" style="width:85%; background:#0284c7;"></div></div>
+          </div>
+
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">👨‍👩‍👧</span>
+              <span class="fp-label">Face Recognition</span>
+            </div>
+            <div class="fp-value" id="fpFace">90%</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpFaceBar" style="width:90%; background:#10b981;"></div></div>
+          </div>
+
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">🔊</span>
+              <span class="fp-label">Audio Recall</span>
+            </div>
+            <div class="fp-value" id="fpAudio">65%</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpAudioBar" style="width:65%; background:#f59e0b;"></div></div>
+          </div>
+
+          <div class="fp-card">
+            <div class="fp-header">
+              <span class="fp-icon">🎯</span>
+              <span class="fp-label">Attention</span>
+            </div>
+            <div class="fp-value" id="fpAttention">72%</div>
+            <div class="fp-bar-bg"><div class="fp-bar-fill" id="fpAttentionBar" style="width:72%; background:#06b6d4;"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Charts Grid: 30-Day Trajectory & Cognitive Fingerprint Radar -->
       <div class="doctor-charts-grid">
         
         <!-- 30-Day Longitudinal Chart -->
@@ -538,43 +650,44 @@
 
       </div>
 
-      <!-- Prescription Desk & Clinical Consultation Logs -->
-      <div class="doctor-mgmt-grid">
+      <!-- Caregiver Consultation Messenger Desk & Longitudinal Clinical Notes -->
+      <div class="doctor-comms-grid">
         
-        <!-- Active Prescriptions Desk -->
-        <div class="dashboard-card">
+        <!-- Doctor Direct Caregiver Chat Card -->
+        <div class="dashboard-card chat-card doctor-chat-card">
           <div class="card-head-flex">
             <div>
-              <h3>💊 Digital Pharmacotherapy & Prescription Desk</h3>
-              <p class="card-subtitle">Active medications with automated multilingual voice read-outs for the patient.</p>
+              <h3 id="doctorChatDeskTitle">💬 Caregiver Consultation Desk: Priya Hazarika (Daughter)</h3>
+              <p class="card-subtitle" id="doctorChatDeskSubtitle">Direct clinical messaging with patient's primary family caregiver</p>
             </div>
-            <button class="btn-primary-action" onclick="openNewPrescriptionModal()">
-              <span>+</span> Add Prescription
-            </button>
+            <span class="doctor-badge-online" id="doctorCaregiverStatusBadge">● Caregiver Active</span>
           </div>
 
-          <div class="prescriptions-table-wrap">
-            <table class="prescriptions-table">
-              <thead>
-                <tr>
-                  <th>Medication & Dose</th>
-                  <th>Timing</th>
-                  <th>Clinical Rationale</th>
-                  <th>Voice Prompt</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody id="doctorPrescriptionsTableBody">
-                <!-- Injected via JS -->
-              </tbody>
-            </table>
+          <div class="chat-thread-container doctor-chat-thread" id="doctorChatMessages">
+            <!-- Dynamic chat messages -->
+          </div>
+
+          <div class="chat-input-wrapper">
+            <div class="quick-chips">
+              <button class="chip-btn" onclick="prefillDoctorChat('Regimen reviewed. Continue morning Donepezil 5mg as scheduled.')">Regimen Approved</button>
+              <button class="chip-btn" onclick="prefillDoctorChat('Please use the Calm Me Down mode at 5:30 PM to curb sundowning agitation.')">Sundowning Guidance</button>
+              <button class="chip-btn" onclick="prefillDoctorChat('Cognitive telemetry is stable (MMSE 22/30). Book next in-clinic follow-up in 30 days.')">Follow-up in 30 Days</button>
+              <button class="chip-btn" onclick="prefillDoctorChat('Ensure high hydration and gentle afternoon veranda walking.')">Hydration & Activity</button>
+            </div>
+            <div class="chat-form-row">
+              <input type="text" id="doctorChatInput" placeholder="Type a clinical reply or guidance to caregiver..." onkeydown="if(event.key==='Enter') sendDoctorMessage()" />
+              <button class="btn-send-msg btn-send-doctor" onclick="sendDoctorMessage()">Send Reply 🩺</button>
+            </div>
           </div>
         </div>
 
         <!-- Clinical Notes & Consultation Log -->
         <div class="dashboard-card">
           <div class="card-head-flex">
-            <h3>📝 Longitudinal Clinical Consultation Notes</h3>
+            <div>
+              <h3>📝 Longitudinal Clinical Consultation Notes</h3>
+              <p class="card-subtitle">In-clinic and telemetry assessment history</p>
+            </div>
             <button class="btn-secondary-action" onclick="openAddNoteModal()">+ Log Consultation</button>
           </div>
           <div class="clinical-notes-list" id="doctorClinicalNotesList">
@@ -582,6 +695,36 @@
           </div>
         </div>
 
+      </div>
+
+      <!-- Prescription Desk -->
+      <div class="dashboard-card doctor-rx-card">
+        <div class="card-head-flex">
+          <div>
+            <h3>💊 Digital Pharmacotherapy & Prescription Desk</h3>
+            <p class="card-subtitle">Active medications with automated multilingual voice read-outs for the patient.</p>
+          </div>
+          <button class="btn-primary-action" onclick="openNewPrescriptionModal()">
+            <span>+</span> Add Prescription
+          </button>
+        </div>
+
+        <div class="prescriptions-table-wrap">
+          <table class="prescriptions-table">
+            <thead>
+              <tr>
+                <th>Medication & Dose</th>
+                <th>Timing</th>
+                <th>Clinical Rationale</th>
+                <th>Voice Prompt</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody id="doctorPrescriptionsTableBody">
+              <!-- Injected via JS -->
+            </tbody>
+          </table>
+        </div>
       </div>
 
     </section>
@@ -641,6 +784,18 @@
           <div class="form-group">
             <label for="rxTime">Scheduled Time</label>
             <input type="text" id="rxTime" class="form-input" value="08:30 AM" required />
+          </div>
+
+          <div class="form-group">
+            <label for="rxMealTiming">Patient Goal / Meal Timing Context</label>
+            <select id="rxMealTiming" class="form-input">
+              <option value="Before Morning Meal (Empty Stomach)">🌅 Morning - Before Meal (Empty Stomach)</option>
+              <option value="After Morning Meal / Tea" selected>🌅 Morning - After Meal / Tea</option>
+              <option value="Before Afternoon Lunch">🍲 Afternoon - Before Lunch</option>
+              <option value="After Afternoon Lunch">🍲 Afternoon - After Lunch</option>
+              <option value="Before Evening Dinner">🌙 Evening - Before Dinner</option>
+              <option value="After Evening Dinner / Bedtime">🌙 Evening - After Dinner / Bedtime</option>
+            </select>
           </div>
 
           <div class="form-group full-width">
@@ -794,9 +949,6 @@
               <option value="0.5">0.5 (Very Mild)</option>
               <option value="1.0" selected>1.0 (Mild Impairment)</option>
               <option value="2.0">2.0 (Moderate Impairment)</option>
-            </select>
-          </div>
-
           <div class="form-group full-width">
             <label for="noteObservations">Doctor's Clinical Observations</label>
             <textarea id="noteObservations" class="form-textarea" rows="3" placeholder="Patient shows clear orientation to family members, stable reaction latency curve..." required></textarea>
@@ -816,8 +968,60 @@
     </div>
   </div>
 
+  <!-- Modal: Add Friend / Family Photo Memory -->
+  <div id="patientPhotoModal" class="modal-overlay" style="display:none;">
+    <div class="form-modal-container">
+      <div class="modal-header">
+        <h3>📸 Add Friend or Family Photo Memory</h3>
+        <button class="modal-close-btn" onclick="closePatientPhotoModal()">✕</button>
+      </div>
+      <form onsubmit="handleSavePatientPhotoMemory(event)">
+        <div class="form-group full-width">
+          <label for="photoPersonName"><strong>Person Name & Relation:</strong></label>
+          <input type="text" id="photoPersonName" class="form-input" placeholder="e.g. Arun (Guwahati College Friend)" required />
+        </div>
+
+        <div class="form-group full-width">
+          <label for="photoCaption"><strong>Caption / Memory Detail:</strong></label>
+          <textarea id="photoCaption" class="form-textarea" rows="3" placeholder="e.g. He is my friend Arun. We met in Guwahati college in 1972 and loved morning tea." required></textarea>
+        </div>
+
+        <div class="form-group full-width">
+          <label><strong>Select Photo:</strong></label>
+          <div class="photo-preset-select-grid">
+            <label class="preset-choice-card">
+              <input type="radio" name="photoPreset" value="assets/friend_arun.jpg" checked />
+              <img src="assets/friend_arun.jpg" alt="Friend Arun" class="choice-thumb" />
+              <span>Friend Arun</span>
+            </label>
+            <label class="preset-choice-card">
+              <input type="radio" name="photoPreset" value="assets/daughter.jpg" />
+              <img src="assets/daughter.jpg" alt="Priya (Daughter)" class="choice-thumb" />
+              <span>Priya</span>
+            </label>
+            <label class="preset-choice-card">
+              <input type="radio" name="photoPreset" value="assets/family.jpg" />
+              <img src="assets/family.jpg" alt="Family" class="choice-thumb" />
+              <span>Family</span>
+            </label>
+            <label class="preset-choice-card">
+              <input type="radio" name="photoPreset" value="assets/elder_dadu.jpg" />
+              <img src="assets/elder_dadu.jpg" alt="Self Biren" class="choice-thumb" />
+              <span>Self Biren</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-cancel" onclick="closePatientPhotoModal()">Cancel</button>
+          <button type="submit" class="btn-save">💾 Save Photo Memory</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <!-- Modal 6: Caregiver Add Custom Quiz Question Modal -->
-  <div id="quizQuestionModal" class="modal-backdrop">
+  <div id="quizQuestionModal" class="modal-backdrop" style="display:none;">
     <div class="form-modal-container">
       <div class="modal-header">
         <h3>❓ Add Personalized Family Quiz Question (for Game 4)</h3>
@@ -884,11 +1088,91 @@
     </div>
   </div>
 
+  <!-- Modal: Patient Daily Routine Schedule Window -->
+  <div id="patientScheduleModal" class="modal-overlay" style="display:none;">
+    <div class="schedule-modal-window">
+      <!-- Modal Header -->
+      <div class="schedule-modal-header">
+        <div class="schedule-modal-header-left">
+          <span class="schedule-modal-icon">📋</span>
+          <div>
+            <h3>Biren Babu's Daily Schedule & Routine</h3>
+            <p>Complete 6-step daily routine & doctor prescription timeline</p>
+          </div>
+        </div>
+        
+        <div class="schedule-modal-header-right">
+          <button class="btn-schedule-voice" onclick="speakFullDailySchedule()" title="Listen to Full Daily Schedule Voice Readout">
+            <span class="mic-pulse-icon">🎙️</span> Read Out Schedule
+          </button>
+          <span class="schedule-tag" id="modalScheduleCountBadge">1 of 6 Completed</span>
+          <button class="schedule-modal-close" onclick="closePatientScheduleModal()">✕</button>
+        </div>
+      </div>
+
+      <!-- Modal Body -->
+      <div class="schedule-modal-body">
+        <div class="schedule-subtitle-bar">
+          <span style="font-size:16px;">🔊</span>
+          <span>Click the <strong>Read Out Schedule 🎙️</strong> button above or floating mic to hear your routine read aloud by Smriti AI.</span>
+        </div>
+
+        <div class="modal-schedule-list" id="modalScheduleList">
+          <!-- Dynamically Injected via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Modal Footer -->
+      <div class="schedule-modal-footer">
+        <button type="button" class="btn-primary-modal-close" onclick="closePatientScheduleModal()">✓ Close Window</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal / Window: Smriti AI Voice & Text Chatbot Companion -->
+  <div id="smritiChatModal" class="modal-overlay" style="display:none;">
+    <div class="smriti-chatbot-window">
+      <!-- Chatbot Header -->
+      <div class="smriti-chatbot-header">
+        <div class="smriti-chatbot-header-left">
+          <div class="smriti-bot-avatar">🤖</div>
+          <div>
+            <h3>Smriti AI Voice & Chat Companion</h3>
+            <span class="smriti-bot-status">● Live Multilingual Voice AI Active</span>
+          </div>
+        </div>
+        <button class="smriti-chatbot-close" onclick="closeSmritiChatModal()">✕</button>
+      </div>
+
+      <!-- Chat Messages Area -->
+      <div class="smriti-chat-thread" id="smritiChatThread">
+        <!-- Dynamic chat messages injected via JS -->
+      </div>
+
+      <!-- Quick Conversation Chips -->
+      <div class="smriti-quick-chips">
+        <button class="chip-btn" onclick="sendSmritiQuickMsg('What is my daily schedule for today?')">📋 Today's Schedule</button>
+        <button class="chip-btn" onclick="sendSmritiQuickMsg('When is my next medicine time?')">💊 Next Medicine</button>
+        <button class="chip-btn" onclick="sendSmritiQuickMsg('Who is my friend Arun?')">👨‍👩‍👦 Friend Arun</button>
+        <button class="chip-btn" onclick="sendSmritiQuickMsg('I am feeling a bit anxious')">🌅 Feeling Anxious?</button>
+      </div>
+
+      <!-- Chat Input Row with Mic & Send Buttons -->
+      <div class="smriti-chat-input-row">
+        <button id="smritiMicInputBtn" class="btn-smriti-mic" onclick="toggleSmritiVoiceInput()" title="Talk with Voice">
+          🎙️
+        </button>
+        <input type="text" id="smritiChatInput" placeholder="Talk or type a message to Smriti AI..." onkeydown="if(event.key==='Enter') sendSmritiChatMessage()" />
+        <button class="btn-smriti-send" onclick="sendSmritiChatMessage()">Send ✉️</button>
+      </div>
+    </div>
+  </div>
+
   <!-- =========================================================================
        FLOATING MULTILINGUAL VOICE ASSISTANT BUTTON
        ========================================================================= -->
-  <button id="voiceFab" class="voice-fab" aria-label="Speak with Smriti AI Assistant" title="Speak to Smriti AI" style="display:none;">
-    🎙️
+  <button id="voiceFab" class="voice-fab" aria-label="Speak with Smriti AI Assistant" title="Speak to Smriti AI Chatbot" style="display:none;">
+    💬
   </button>
 
   <!-- Application Logic -->

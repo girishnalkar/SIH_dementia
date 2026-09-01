@@ -7,6 +7,8 @@ import 'game_cultural_match_screen.dart';
 import 'game_family_quiz_screen.dart';
 import 'calm_reminiscence_screen.dart';
 
+import '../services/api_service.dart';
+
 class HomeScreen extends StatefulWidget {
   final Function(String) onLanguageChanged;
   final String currentLanguage;
@@ -22,6 +24,45 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _fetchDoctorPrescriptionsAndSyncGoals();
+  }
+
+  Future<void> _fetchDoctorPrescriptionsAndSyncGoals() async {
+    final meds = await ApiService.fetchPrescriptions('PAT-7401');
+    if (meds.isNotEmpty) {
+      setState(() {
+        for (final m in meds) {
+          final taskId = 'task-rx-${m.id}';
+          final exists = _schedule.any((t) => t.id == taskId || t.title.contains(m.name));
+          if (!exists) {
+            _schedule.add(
+              ScheduleTask(
+                id: taskId,
+                title: '💊 ${m.name} ${m.dose} (${m.mealTiming})',
+                time: m.time,
+                icon: '💊',
+                type: TaskType.medication,
+                bgHex: 0xFFFEFCE8,
+                borderHex: 0xFFEAB308,
+                textHex: 0xFF713F12,
+                instructions: m.instructions.isNotEmpty ? m.instructions : {
+                  'en': 'GOAL (${m.mealTiming.toUpperCase()}): Take 1 tablet of ${m.name} (${m.dose}) with water.',
+                  'as': 'ৰাতিপুৱাৰ চাহ খোৱাৰ পিছত ১টা টেবলেট পানীৰে সৈতে লওক।',
+                  'bn': 'সকালের খাবারের পর ১টি ট্যাবলেট জল দিয়ে খান।',
+                  'hi': 'भोजन के बाद 1 गोली पानी के साथ लें।',
+                },
+                isCompleted: false,
+              ),
+            );
+          }
+        }
+      });
+    }
+  }
+
   final List<ScheduleTask> _schedule = [
     ScheduleTask(
       id: 'task-1',

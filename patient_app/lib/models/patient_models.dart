@@ -45,6 +45,7 @@ class MedicationItem {
   final String name;
   final String dose;
   final String time;
+  final String mealTiming;
   final int colorHex;
   final Map<String, String> instructions;
   bool isTakenToday;
@@ -54,6 +55,7 @@ class MedicationItem {
     required this.name,
     required this.dose,
     required this.time,
+    this.mealTiming = 'After Morning Meal / Tea',
     required this.colorHex,
     required this.instructions,
     this.isTakenToday = false,
@@ -65,6 +67,7 @@ class MedicationItem {
       name: 'Donepezil',
       dose: '5 mg - 1 Tablet',
       time: '08:30 AM',
+      mealTiming: 'After Morning Meal / Tea',
       colorHex: 0xFF3B82F6,
       instructions: {
         'en': 'Take 1 blue tablet with water after morning tea.',

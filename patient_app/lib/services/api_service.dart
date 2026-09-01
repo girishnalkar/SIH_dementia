@@ -50,6 +50,7 @@ class ApiService {
             name: json['name'] ?? 'Donepezil',
             dose: json['dose'] ?? '5 mg',
             time: json['time'] ?? '08:30 AM',
+            mealTiming: json['meal_timing'] ?? 'After Morning Meal / Tea',
             colorHex: 0xFF3B82F6,
             instructions: Map<String, String>.from(json['instructions'] ?? {}),
           );
