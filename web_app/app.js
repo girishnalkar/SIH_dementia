@@ -1222,7 +1222,7 @@ function stopChatPolling() {
 function renderAllChats() {
   renderCaregiverChat();
   renderDoctorChat();
-=======
+}
 function renderCaregiverQuizQuestions() {
   const container = document.getElementById('caregiverQuizList');
   if (!container) return;
@@ -1313,7 +1313,6 @@ function deleteCaregiverQuizQuestion(qId) {
     AppState.quizQuestions[AppState.activePatientId] = AppState.quizQuestions[AppState.activePatientId].filter(q => q.id !== qId);
   }
   renderCaregiverQuizQuestions();
->>>>>>> origin/main
 }
 
 function renderCaregiverChat() {
